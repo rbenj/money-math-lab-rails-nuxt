@@ -1,0 +1,26 @@
+{
+  "name": "Money Math Lab - Rails Nuxt",
+  "image": "mcr.microsoft.com/devcontainers/ruby:3.4",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24"
+    },
+    "ghcr.io/devcontainers/features/postgres:1": {
+      "version": "18"
+    }
+  },
+  "forwardPorts": [3000, 3001],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig",
+        "naumovs.color-highlight",
+        "Shopify.ruby-lsp",
+        "streetsidesoftware.code-spell-checker",
+        "Vue.volar"
+      ]
+    }
+  }
+}
