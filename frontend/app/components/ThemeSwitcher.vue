@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { Laptop, Moon, Sun } from 'lucide-vue-next'
-import { Button } from '@/components/ui/button'
+import { Laptop, Moon, Sun } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from '@/components/ui/dropdown-menu';
 
-const colorMode = useColorMode()
+const colorMode = useColorMode();
 
-const ICON_SIZE = 16
+const ICON_SIZE = 16;
 </script>
 
 <template>
