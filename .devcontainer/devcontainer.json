@@ -4,12 +4,11 @@
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "24"
-    },
-    "ghcr.io/devcontainers/features/postgres:1": {
-      "version": "18"
     }
   },
   "forwardPorts": [3000, 3001],
+  "postCreateCommand": "sudo rm -f /etc/apt/sources.list.d/yarn.list && sudo apt-get update && sudo apt-get install -y postgresql postgresql-contrib && sudo service postgresql start && sudo su - postgres -c \"createuser -s vscode\"",
+  "postStartCommand": "sudo service postgresql start",
   "customizations": {
     "vscode": {
       "extensions": [
