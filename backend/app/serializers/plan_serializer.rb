@@ -7,4 +7,8 @@ class PlanSerializer < Blueprinter::Base
   field :retirement_age, name: :retirementAge
   field :created_at, name: :createdAt
   field :updated_at, name: :updatedAt
+
+  view :with_entities do
+    association :entities, blueprint: EntitySerializer, view: :with_ledger_entries
+  end
 end

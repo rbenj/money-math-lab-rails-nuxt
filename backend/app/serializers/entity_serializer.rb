@@ -3,10 +3,14 @@ class EntitySerializer < Blueprinter::Base
 
   field :plan_id, name: :planId
   field :name
-  field :entity_type, name: :type
+  field :entity_type, name: :type # Map outgoing 'entity_type' to 'type' for frontend
   field :template_key, name: :templateKey
   field :parent_id, name: :parentId
   field :data
   field :created_at, name: :createdAt
   field :updated_at, name: :updatedAt
+
+  view :with_ledger_entries do
+    association :ledger_entries, blueprint: LedgerEntrySerializer, name: :ledgerEntries
+  end
 end

@@ -4,6 +4,8 @@ class Entity < ApplicationRecord
   has_many :children, class_name: 'Entity', foreign_key: 'parent_id', dependent: :nullify
   has_many :ledger_entries, dependent: :destroy
 
+  accepts_nested_attributes_for :ledger_entries, allow_destroy: true
+
   validates :name, presence: true
   validates :entity_type, presence: true
   validates :template_key, presence: true
