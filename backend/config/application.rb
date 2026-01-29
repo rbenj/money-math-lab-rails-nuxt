@@ -28,5 +28,12 @@ module Backend
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Enable sessions for API mode (required for session-based auth)
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore, key: '_money_math_lab_session'
+
+    # Ensure cookies work cross-origin
+    config.action_dispatch.cookies_same_site_protection = :lax
   end
 end
