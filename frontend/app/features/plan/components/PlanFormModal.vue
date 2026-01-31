@@ -9,6 +9,7 @@ import {
 } from "@/constants";
 import { birthDateStringToMonthYear } from "@/lib/date-utils";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { SerializedPlanSummary } from "../types";
@@ -50,7 +51,7 @@ function getInitialFormValues() {
 }
 
 const formData = ref(getInitialFormValues());
-const useExampleData = ref(false);
+const useExampleData = ref(true);
 
 const isDisabled = computed(() => {
   return !formData.value.name.trim() || isSubmitting.value;
@@ -150,18 +151,14 @@ function handleClose() {
             <div class="text-muted-foreground text-sm">Your planned retirement age</div>
           </div>
 
-          <div v-if="isCreating" class="bg-muted/50 flex items-center gap-2 rounded-md border p-3">
-            <input
+          <div v-if="isCreating" class="flex items-center gap-2">
+            <Checkbox
               id="useExample"
-              v-model="useExampleData"
-              type="checkbox"
-              class="border-input h-4 w-4 rounded"
+              :default-value="true"
+              @update:checked="(val: boolean) => (useExampleData = val)"
             />
-            <Label for="useExample" class="cursor-pointer">
-              <span class="font-medium">Start with example data</span>
-              <span class="text-muted-foreground block text-sm">
-                Populate with sample income, accounts, debts, and expenses
-              </span>
+            <Label for="useExample" class="text-muted-foreground cursor-pointer text-sm">
+              Populate with demo data
             </Label>
           </div>
 
