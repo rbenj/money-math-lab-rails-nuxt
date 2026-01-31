@@ -1,114 +1,37 @@
 <script setup lang="ts">
 import { ArrowLeft, Cake, PalmtreeIcon, Settings } from "lucide-vue-next";
-import { calculateAgeFromDate } from "@/lib/date-utils";
-import { isEntityActive } from "@/features/entity/utils";
-import type { Entity } from "@/features/entity/entity";
 import type { SerializedPlanSummary } from "@/features/plan/types";
-import { Plan } from "@/features/plan/plan";
-import { usePlanApi } from "@/features/plan/composables/use-plan-api";
+import { usePlanPage } from "@/features/plan/composables/use-plan-page";
 
 definePageMeta({
   middleware: "auth",
 });
 
 const route = useRoute();
-const planApi = usePlanApi();
+const planId = (route.params.planId || "").toString();
 
-const { data: planData } = await useAsyncData(`plan-${route.params.planId}`, () =>
-  planApi.fetchPlan(route.params.planId as string),
-);
+const {
+  plan,
+  planName,
+  currentAge,
+  retirementAge,
+  filteredPlan,
+  activeEntityIds,
+  mutedEntityIds,
+  soloedEntityIds,
+  toggleMute,
+  toggleSolo,
+  handlePlanUpdated,
+  handleEntityCreated,
+  handleEntityUpdated,
+  handleEntityDeleted,
+} = await usePlanPage(planId);
 
-if (!planData.value) {
-  throw createError({ statusCode: 404, message: "Plan not found" });
-}
-
-const plan = Plan.fromSerialized(planData.value);
-
-const planName = ref(plan.name);
-const birthDate = ref(plan.birthDate);
-const retirementAge = ref(plan.retirementAge);
-const entities = ref<Entity[]>(plan.entities);
-const mutedEntityIds = ref(new Set<string>());
-const soloedEntityIds = ref(new Set<string>());
 const isSettingsOpen = ref(false);
 
-const currentAge = computed(() => calculateAgeFromDate(new Date(), birthDate.value));
-
-const entitiesMap = computed(() => {
-  return new Map(entities.value.map((e) => [e.id, e]));
-});
-
-const activeEntityIds = computed(() => {
-  return new Set(
-    entities.value
-      .filter((e) =>
-        isEntityActive(e, soloedEntityIds.value, mutedEntityIds.value, entitiesMap.value),
-      )
-      .map((e) => e.id),
-  );
-});
-
-// Current plan summary gets passed to the settings modal
-const currentPlanSummary = computed(
-  (): SerializedPlanSummary => ({
-    id: route.params.planId as string,
-    name: planName.value,
-    birthDate: birthDate.value,
-    retirementAge: retirementAge.value,
-  }),
-);
-
-// Build the filtered plan that the simulation will run on
-const filteredPlan = computed(() => {
-  const activeEntities = entities.value.filter((e) => activeEntityIds.value.has(e.id));
-  return new Plan({
-    id: route.params.planId as string,
-    name: planName.value,
-    birthDate: birthDate.value,
-    retirementAge: retirementAge.value,
-    entities: activeEntities,
-  }).simulate();
-});
-
-function handlePlanUpdated(planSummary: SerializedPlanSummary) {
-  planName.value = planSummary.name;
-  birthDate.value = planSummary.birthDate;
-  retirementAge.value = planSummary.retirementAge;
+function onPlanUpdated(summary: SerializedPlanSummary) {
+  handlePlanUpdated(summary);
   isSettingsOpen.value = false;
-}
-
-function handleMute(entityId: string) {
-  const next = new Set(mutedEntityIds.value);
-  if (next.has(entityId)) {
-    next.delete(entityId);
-  } else {
-    next.add(entityId);
-  }
-  mutedEntityIds.value = next;
-}
-
-function handleSolo(entityId: string) {
-  const next = new Set(soloedEntityIds.value);
-  if (next.has(entityId)) {
-    next.delete(entityId);
-  } else {
-    next.add(entityId);
-  }
-  soloedEntityIds.value = next;
-}
-
-function handleEntityCreated(entity: Entity) {
-  entities.value = [...entities.value, entity];
-}
-
-function handleEntityUpdated(updated: Entity) {
-  entities.value = entities.value.map((e) => (e.id === updated.id ? updated : e));
-}
-
-function handleEntityDeleted(entityId: string) {
-  entities.value = entities.value.filter((e) => e.id !== entityId);
-  mutedEntityIds.value.delete(entityId);
-  soloedEntityIds.value.delete(entityId);
 }
 </script>
 
@@ -117,14 +40,13 @@ function handleEntityDeleted(entityId: string) {
     <!-- Left -->
     <aside class="order-2 h-full w-full pt-4 lg:order-1 lg:w-2/5 xl:w-1/3">
       <EntitiesList
-        :plan-id="route.params.planId as string"
         :plan="plan"
         :filtered-plan="filteredPlan"
         :active-entity-ids="activeEntityIds"
         :muted-entity-ids="mutedEntityIds"
         :soloed-entity-ids="soloedEntityIds"
-        @mute="handleMute"
-        @solo="handleSolo"
+        @mute="toggleMute"
+        @solo="toggleSolo"
         @entity-created="handleEntityCreated"
         @entity-updated="handleEntityUpdated"
         @entity-deleted="handleEntityDeleted"
@@ -205,15 +127,14 @@ function handleEntityDeleted(entityId: string) {
       </div>
     </section>
 
-    <!-- Settings Modal -->
+    <!-- Edit plan modal -->
     <PlanFormModal
       :open="isSettingsOpen"
-      :plan-id="route.params.planId as string"
+      :plan-id="planId"
       title="Plan Settings"
-      :initial-data="currentPlanSummary"
       submit-label="Save Changes"
       @close="isSettingsOpen = false"
-      @success="handlePlanUpdated"
+      @success="onPlanUpdated"
     />
   </div>
 </template>

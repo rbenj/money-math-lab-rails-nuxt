@@ -1,7 +1,9 @@
 import { dateToEpochDay } from "@/lib/date-utils";
 import type { Entity } from "@/features/entity/entity";
 import { deserializeEntities } from "@/features/entity/serialization";
+import { ExpenseEntity } from "@/features/entity/entity-types/expense-entity";
 import { FallbackEntity } from "@/features/entity/entity-types/fallback-entity";
+import { IncomeEntity } from "@/features/entity/entity-types/income-entity";
 import { Simulation, type DataPointsByDay } from "@/features/simulation/simulation";
 import type { SerializedPlan, SerializedPlanSummary } from "./types";
 
@@ -196,5 +198,20 @@ export class Plan {
    */
   public getEntityValue(entity: Entity): number {
     return this.simulation?.getEntityValueForDay(entity.id, this.todayDay) ?? 0;
+  }
+
+  /**
+   * Get the designated display value for an entity.
+   */
+  public getEntityDisplayValue(entityId: string): number {
+    const entity = this.entities.find((e) => e.id === entityId);
+    if (!entity) return 0;
+
+    if (entity instanceof IncomeEntity || entity instanceof ExpenseEntity) {
+      const lastEntry = entity.ledger[entity.ledger.length - 1];
+      return lastEntry?.amount ?? 0;
+    }
+
+    return this.getEntityValue(entity);
   }
 }

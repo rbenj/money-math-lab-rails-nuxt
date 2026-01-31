@@ -7,11 +7,8 @@ import type { Entity } from "@/features/entity/entity";
 import { useEntityApi } from "@/features/entity/composables/use-entity-api";
 import { AccountEntity } from "@/features/entity/entity-types/account-entity";
 import { FallbackEntity } from "@/features/entity/entity-types/fallback-entity";
-import { IncomeEntity } from "@/features/entity/entity-types/income-entity";
-import { ExpenseEntity } from "@/features/entity/entity-types/expense-entity";
 
 const props = defineProps<{
-  planId: string;
   plan: Plan;
   filteredPlan: Plan;
   activeEntityIds: Set<string>;
@@ -39,26 +36,13 @@ const displayEntities = computed(() => {
   return sortEntities(allEntities);
 });
 
-// Find fallback entity on full plan, and use filtered simulation to get its value
 const cashEntity = computed(() => props.plan.entities.find((e) => e instanceof FallbackEntity));
 const cashValue = computed(() =>
   cashEntity.value ? props.filteredPlan.getEntityValue(cashEntity.value) : 0,
 );
 
-// Get display value for an entity from Plan simulation, income and expense will show a ledger value
-function getDisplayValue(entityId: string): string {
-  const entity = props.filteredPlan.entities.find((e) => e.id === entityId);
-  if (!entity) return "";
-
-  let value: number;
-  if (entity instanceof IncomeEntity || entity instanceof ExpenseEntity) {
-    // Show the payment amount from the last ledger entry
-    const ledgerEntry = entity.ledger ? entity.ledger[entity.ledger.length - 1] : null;
-    value = ledgerEntry?.amount ?? 0;
-  } else {
-    value = props.filteredPlan.getEntityValue(entity);
-  }
-
+function formatDisplayValue(entityId: string): string {
+  const value = props.filteredPlan.getEntityDisplayValue(entityId);
   return value ? formatAbbreviatedDisplayMoney(value) : "";
 }
 
@@ -128,7 +112,7 @@ async function handleDelete() {
         :key="entity.id"
         :entity="entity"
         :display-name="entity.name"
-        :display-value="getDisplayValue(entity.id)"
+        :display-value="formatDisplayValue(entity.id)"
         :is-active="activeEntityIds.has(entity.id)"
         :is-child="!!entity.parentId"
         :is-muted="mutedEntityIds.has(entity.id)"
@@ -144,7 +128,7 @@ async function handleDelete() {
     <EntityFormModal
       :open="isCreateModalOpen"
       title="Create Entity"
-      :plan-id="planId"
+      :plan-id="plan.id"
       :available-parents="availableParents"
       :available-accounts="availableAccounts"
       @close="isCreateModalOpen = false"
@@ -156,7 +140,7 @@ async function handleDelete() {
       v-if="editingEntity"
       :open="!!editingEntity"
       title="Edit Entity"
-      :plan-id="planId"
+      :plan-id="plan.id"
       :entity-id="editingEntity.id"
       :initial-entity="editingEntity"
       :available-parents="availableParents"
