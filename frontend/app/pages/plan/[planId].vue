@@ -1,70 +1,82 @@
 <script setup lang="ts">
-// TODO: Import once ported
-// import { Plan } from '@/features/plan/plan';
-// import { deserializeEntities } from '@/features/entity/serialization';
-// import { isEntityActive } from '@/features/entity/utils';
-// import type { Entity, SerializedEntity } from '@/features/entity/entity';
+import { ArrowLeft, Cake, PalmtreeIcon, Settings } from 'lucide-vue-next';
+import { calculateAgeFromDate } from '@/lib/date-utils';
+import { isEntityActive } from '@/features/entity/utils';
+import type { Entity } from '@/features/entity/entity';
+import EntitiesList from '@/features/entity/components/EntitiesList.vue';
+import type { SerializedPlanSummary } from '@/features/plan/types';
+import { Plan } from '@/features/plan/plan';
+import { usePlanApi } from '@/features/plan/composables/use-plan-api';
+import PlanFormModal from '@/features/plan/components/PlanFormModal.vue';
+import MetricsGrid from '@/features/plan/components/MetricsGrid.vue';
+import SimulationChart from '@/features/plan/components/SimulationChart.vue';
 
 definePageMeta({
   middleware: 'auth',
 });
 
-interface SerializedEntity {
-  id: string;
-  planId: string;
-  name: string;
-  type: string;
-  templateKey: string;
-  parentId: string | null;
-  data: Record<string, unknown>;
-  ledgerEntries: Array<{
-    id: string;
-    entityId: string;
-    day: number;
-    amount: number | null;
-    shareQuantity: number | null;
-    sharePrice: number | null;
-  }>;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface PlanApiResponse {
-  id: string;
-  name: string;
-  birthDate: string;
-  retirementAge: number;
-  entities: SerializedEntity[];
-}
-
 const route = useRoute();
-const { get } = useApi();
+const planApi = usePlanApi();
 
 const { data: planData } = await useAsyncData(
   `plan-${route.params.planId}`,
-  () => get<PlanApiResponse>(`/plans/${route.params.planId}`),
+  () => planApi.fetchPlan(route.params.planId as string),
 );
 
 if (!planData.value) {
   throw createError({ statusCode: 404, message: 'Plan not found' });
 }
 
-const planName = ref(planData.value.name);
-const birthDate = ref(planData.value.birthDate);
-const retirementAge = ref(planData.value.retirementAge);
-const entities = ref(planData.value.entities);
+const plan = Plan.fromSerialized(planData.value);
+
+const planName = ref(plan.name);
+const birthDate = ref(plan.birthDate);
+const retirementAge = ref(plan.retirementAge);
+const entities = ref<Entity[]>(plan.entities);
 const mutedEntityIds = ref(new Set<string>());
 const soloedEntityIds = ref(new Set<string>());
+const isSettingsOpen = ref(false);
 
-// TODO: Build the Plan object when Plan class is ported
-// const plan = computed(() => {
-//   return new Plan({
-//     name: planName.value,
-//     entities: deserializeEntities(entities.value),
-//     birthDate: birthDate.value,
-//     retirementAge: retirementAge.value,
-//   });
-// });
+const currentAge = computed(() => calculateAgeFromDate(new Date(), birthDate.value));
+
+const entitiesMap = computed(() => {
+  return new Map(entities.value.map(e => [e.id, e]));
+});
+
+const activeEntityIds = computed(() => {
+  return new Set(
+    entities.value
+      .filter(e => isEntityActive(e, soloedEntityIds.value, mutedEntityIds.value, entitiesMap.value))
+      .map(e => e.id),
+  );
+});
+
+// Current plan summary gets passed to the settings modal
+const currentPlanSummary = computed((): SerializedPlanSummary => ({
+  id: route.params.planId as string,
+  name: planName.value,
+  birthDate: birthDate.value,
+  retirementAge: retirementAge.value,
+}));
+
+// Build the filtered plan that the simulation will run on
+const filteredPlan = computed(() => {
+  const activeEntities = entities.value.filter(e => activeEntityIds.value.has(e.id));
+  return new Plan({
+    id: route.params.planId as string,
+    name: planName.value,
+    birthDate: birthDate.value,
+    retirementAge: retirementAge.value,
+    entities: activeEntities,
+  }).simulate();
+});
+
+function handlePlanUpdated(planSummary: SerializedPlanSummary) {
+  planName.value = planSummary.name;
+  birthDate.value = planSummary.birthDate;
+  retirementAge.value = planSummary.retirementAge;
+  isSettingsOpen.value = false;
+}
 
 function handleMute(entityId: string) {
   const next = new Set(mutedEntityIds.value);
@@ -86,11 +98,11 @@ function handleSolo(entityId: string) {
   soloedEntityIds.value = next;
 }
 
-function handleEntityCreated(entity: SerializedEntity) {
+function handleEntityCreated(entity: Entity) {
   entities.value = [...entities.value, entity];
 }
 
-function handleEntityUpdated(updated: SerializedEntity) {
+function handleEntityUpdated(updated: Entity) {
   entities.value = entities.value.map(e =>
     e.id === updated.id ? updated : e,
   );
@@ -101,69 +113,105 @@ function handleEntityDeleted(entityId: string) {
   mutedEntityIds.value.delete(entityId);
   soloedEntityIds.value.delete(entityId);
 }
-
-function handleSettingsUpdated(data: { name: string; birthDate: string; retirementAge: number }) {
-  planName.value = data.name;
-  birthDate.value = data.birthDate;
-  retirementAge.value = data.retirementAge;
-}
 </script>
 
 <template>
   <div class="flex flex-col h-full gap-8 px-4 lg:flex-row lg:gap-14 lg:px-12">
-    <!-- Left column -->
+    <!-- Left -->
     <aside class="order-2 h-full w-full pt-4 lg:order-1 lg:w-2/5 xl:w-1/3">
-      <!-- TODO: EntitiesList component -->
-
-      <div class="space-y-4">
-        <h2 class="text-xl font-semibold">Entities</h2>
-
-        <div v-for="entity in entities" :key="entity.id" class="p-4 border rounded-lg">
-          <div class="flex items-center justify-between">
-            <span class="font-medium">{{ entity.name }}</span>
-            <span class="text-sm text-muted-foreground">{{ entity.type }}</span>
-          </div>
-        </div>
-
-        <div v-if="entities.length === 0" class="text-muted-foreground">
-          No entities yet. Add your first income, expense, or account.
-        </div>
-      </div>
+      <ClientOnly>
+        <EntitiesList
+          :plan-id="route.params.planId as string"
+          :plan="plan"
+          :filtered-plan="filteredPlan"
+          :active-entity-ids="activeEntityIds"
+          :muted-entity-ids="mutedEntityIds"
+          :soloed-entity-ids="soloedEntityIds"
+          @mute="handleMute"
+          @solo="handleSolo"
+          @entity-created="handleEntityCreated"
+          @entity-updated="handleEntityUpdated"
+          @entity-deleted="handleEntityDeleted"
+        />
+      </ClientOnly>
     </aside>
 
     <!-- Right -->
     <section class="order-1 flex-1 lg:order-2">
+      <!-- Sticky container -->
       <div class="pt-3 flex flex-col gap-8 lg:sticky lg:top-20">
         <!-- Header -->
-        <div class="flex items-center justify-between">
-          <h1 class="text-2xl font-bold">{{ planName }}</h1>
+        <header class="flex flex-col items-between pb-2 xl:flex-row xl:items-start xl:justify-between">
+          <!-- Breadcrumb -->
+          <div class="flex items-center gap-3 text-xl tracking-tight md:text-2xl lg:text-3xl">
+            <NuxtLink
+              to="/plans"
+              class="flex items-center justify-center w-10 h-10 opacity-70 transition-opacity relative hover:opacity-100"
+            >
+              <svg class="absolute inset-0 w-full h-full" viewBox="0 0 64 64">
+                <circle
+                  cx="32"
+                  cy="32"
+                  r="30"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-dasharray="5.9 5.9"
+                  class="text-foreground"
+                />
+              </svg>
+              <ArrowLeft :size="20" />
+            </NuxtLink>
 
-          <!-- TODO: PlanHeader with settings modal -->
-        </div>
-
-        <!-- TODO: SimulationChart -->
-        <div class="h-64 border rounded-lg flex items-center justify-center text-muted-foreground">
-          Chart goes here
-        </div>
-
-        <!-- TODO: MetricsGrid -->
-        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <div class="p-4 border rounded-lg">
-            <div class="text-sm text-muted-foreground">Birth Date</div>
-            <div class="text-lg font-semibold">{{ birthDate }}</div>
+            <div class="flex">
+              <NuxtLink to="/plans" class="text-muted-foreground hover:text-foreground no-underline mr-2 whitespace-nowrap">
+                Plans /
+              </NuxtLink>
+              <span class="font-semibold">{{ planName }}</span>
+            </div>
           </div>
 
-          <div class="p-4 border rounded-lg">
-            <div class="text-sm text-muted-foreground">Retirement Age</div>
-            <div class="text-lg font-semibold">{{ retirementAge }}</div>
-          </div>
+          <!-- Controls -->
+          <div class="flex items-center gap-6 justify-end mt-6 -mb-16 z-2 xl:justify-start xl:pt-1 xl:m-0">
+            <ClientOnly>
+              <div class="flex items-center gap-1 text-sm text-muted-foreground" title="Current age">
+                <Cake class="h-6 w-6" />
+                <span>{{ currentAge }}</span>
+              </div>
+            </ClientOnly>
 
-          <div class="p-4 border rounded-lg">
-            <div class="text-sm text-muted-foreground">Entities</div>
-            <div class="text-lg font-semibold">{{ entities.length }}</div>
+            <div class="flex items-center gap-1 text-sm text-muted-foreground" title="Retirement age">
+              <PalmtreeIcon class="h-6 w-6" />
+              <span>{{ retirementAge }}</span>
+            </div>
+
+            <button
+              class="text-muted-foreground hover:text-foreground"
+              title="Edit plan"
+              @click="isSettingsOpen = true"
+            >
+              <Settings class="h-6 w-6" />
+              <span class="sr-only">Edit plan</span>
+            </button>
           </div>
-        </div>
+        </header>
+
+        <ClientOnly>
+          <SimulationChart :plan="filteredPlan" />
+          <MetricsGrid :plan="filteredPlan" />
+        </ClientOnly>
       </div>
     </section>
+
+    <!-- Settings Modal -->
+    <PlanFormModal
+      :open="isSettingsOpen"
+      :plan-id="route.params.planId"
+      title="Plan Settings"
+      :initial-data="currentPlanSummary"
+      submit-label="Save Changes"
+      @close="isSettingsOpen = false"
+      @success="handlePlanUpdated"
+    />
   </div>
 </template>

@@ -10,34 +10,38 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const colorMode = useColorMode();
-
-const ICON_SIZE = 16;
 </script>
 
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button class="hover:bg-transparent" size="icon" variant="ghost">
-        <Sun v-if="colorMode.value === 'light'" :size="ICON_SIZE" class="text-muted-foreground" />
-        <Moon v-else-if="colorMode.value === 'dark'" :size="ICON_SIZE" class="text-muted-foreground" />
-        <Laptop v-else :size="ICON_SIZE" class="text-muted-foreground" />
+      <Button
+        class="text-muted-foreground hover:bg-transparent"
+        size="icon-sm"
+        variant="ghost"
+      >
+        <ClientOnly>
+          <Sun v-if="colorMode.value === 'light'" />
+          <Moon v-else-if="colorMode.value === 'dark'" />
+          <Laptop v-else />
+        </ClientOnly>
       </Button>
     </DropdownMenuTrigger>
 
-    <DropdownMenuContent class="w-content" align="start">
+    <DropdownMenuContent align="start" class="w-content">
       <DropdownMenuRadioGroup v-model="colorMode.preference">
-        <DropdownMenuRadioItem class="flex gap-2" value="light">
-          <Sun :size="ICON_SIZE" class="text-muted-foreground" />
+        <DropdownMenuRadioItem value="light" class="flex gap-2">
+          <Sun class="text-muted-foreground" />
           <span>Light</span>
         </DropdownMenuRadioItem>
 
-        <DropdownMenuRadioItem class="flex gap-2" value="dark">
-          <Moon :size="ICON_SIZE" class="text-muted-foreground" />
+        <DropdownMenuRadioItem value="dark" class="flex gap-2">
+          <Moon class="text-muted-foreground" />
           <span>Dark</span>
         </DropdownMenuRadioItem>
 
-        <DropdownMenuRadioItem class="flex gap-2" value="system">
-          <Laptop :size="ICON_SIZE" class="text-muted-foreground" />
+        <DropdownMenuRadioItem value="system" class="flex gap-2">
+          <Laptop class="text-muted-foreground" />
           <span>System</span>
         </DropdownMenuRadioItem>
       </DropdownMenuRadioGroup>

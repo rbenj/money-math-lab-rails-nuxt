@@ -1,0 +1,63 @@
+<script setup lang="ts">
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+
+defineOptions({
+  inheritAttrs: false,
+});
+
+const attrs = useAttrs();
+const { user, logout } = useAuth();
+
+const initial = computed(() => {
+  return user.value?.email.charAt(0).toUpperCase() || '?';
+});
+
+async function handleLogout() {
+  await logout();
+}
+</script>
+
+<template>
+  <ClientOnly>
+    <Avatar v-if="!user" v-bind="attrs">
+      <AvatarFallback class="bg-muted" />
+    </Avatar>
+
+    <template v-else>
+      <DropdownMenu>
+        <DropdownMenuTrigger as-child>
+          <Button variant="ghost" size="icon" class="rounded-full" v-bind="attrs">
+            <Avatar>
+              <AvatarFallback class="font-semibold text-background bg-foreground">
+                {{ initial }}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent align="end" class="w-32">
+          <DropdownMenuGroup>
+            <DropdownMenuItem as-child>
+              <NuxtLink to="/plans">Plans</NuxtLink>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <DropdownMenuItem @click="handleLogout" class="text-destructive">
+              Logout
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </template>
+  </ClientOnly>
+</template>

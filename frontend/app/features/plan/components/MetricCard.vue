@@ -1,0 +1,63 @@
+<script setup lang="ts">
+import { TrendingUp, TrendingDown } from 'lucide-vue-next';
+import { formatDisplayMoney } from '@/lib/money-utils';
+import { Badge } from '@/components/ui/badge';
+import {
+  Card,
+  CardAction,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
+const props = defineProps<{
+  title: string;
+  value: number;
+  previousValue: number;
+}>();
+
+const formattedValue = computed(() => formatDisplayMoney(Math.abs(props.value)));
+const isUp = computed(() => props.value >= props.previousValue);
+
+const trendLabel = computed(() => isUp.value ? 'Up from last year' : 'Down from last year');
+const TrendIcon = computed(() => isUp.value ? TrendingUp : TrendingDown);
+
+const percentChange = computed(() => {
+  if (!props.previousValue) return 0;
+  return ((props.value - props.previousValue) / Math.abs(props.previousValue)) * 100;
+});
+
+const formattedPercent = computed(() => {
+  const sign = percentChange.value >= 0 ? '+' : '';
+  return `${sign}${percentChange.value.toFixed(1)}%`;
+});
+</script>
+
+<template>
+  <Card class="border-card-alt-border bg-card-alt">
+    <CardHeader>
+      <CardDescription class="text-card-alt-muted-foreground">
+        {{ title }}
+      </CardDescription>
+
+      <CardTitle class="text-2xl tabular-nums text-card-alt-foreground">
+        {{ formattedValue }}
+      </CardTitle>
+
+      <CardAction>
+        <Badge variant="outline" class="gap-1 rounded-full border-card-alt-muted-foreground">
+          <component :is="TrendIcon" class="h-3 w-3" />
+          {{ formattedPercent }}
+        </Badge>
+      </CardAction>
+    </CardHeader>
+
+    <CardFooter>
+      <div class="flex gap-2 text-card-alt-muted-foreground">
+        {{ trendLabel }}
+        <component :is="TrendIcon" class="h-5 w-5 text-card-alt-foreground" />
+      </div>
+    </CardFooter>
+  </Card>
+</template>

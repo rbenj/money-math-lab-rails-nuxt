@@ -16,6 +16,11 @@ module Api
         plan = current_user.plans.build(plan_params)
 
         if plan.save
+          # Add example entities if requested
+          if params[:use_example] == true || params[:use_example] == 'true'
+            ::ExamplePlanService.new(plan).call
+          end
+
           render json: PlanSerializer.render(plan), status: :created
         else
           render json: { errors: plan.errors }, status: :unprocessable_entity

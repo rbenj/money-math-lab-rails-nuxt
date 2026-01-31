@@ -1,32 +1,60 @@
 <script setup lang="ts">
+import { Plus, Settings as SettingsIcon, Trash2 } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import type { SerializedPlanSummary } from '@/features/plan/types';
+import { usePlanApi } from '@/features/plan/composables/use-plan-api';
+import PlanFormModal from '@/features/plan/components/PlanFormModal.vue';
 
 definePageMeta({
   middleware: 'auth',
 });
 
-interface PlanData {
-  id: string;
-  name: string;
-  birthDate: string;
-  retirementAge: number;
-  createdAt: string;
-  updatedAt: string;
-};
+const router = useRouter();
+const planApi = usePlanApi();
 
-const { get } = useApi();
+const { data: plans, refresh } = await useAsyncData('plans', () => planApi.fetchPlanSummaries());
 
-const { data: plans, refresh } = await useAsyncData('plans', () =>
-  get<PlanData[]>('/plans'),
-);
+const isCreateModalOpen = ref(false);
 
-async function handlePlanCreated() {
+const editingPlan = ref<SerializedPlanSummary | null>(null);
+
+const deletingPlan = ref<SerializedPlanSummary | null>(null);
+const isDeleteLoading = ref(false);
+
+function handlePlanCreated(plan: SerializedPlanSummary) {
+  isCreateModalOpen.value = false;
+  router.push(`/plan/${plan.id}`);
+}
+
+async function handlePlanUpdated() {
+  editingPlan.value = null;
   await refresh();
 }
 
-async function handlePlanDeleted() {
-  await refresh();
+async function handleDeletePlan() {
+  if (!deletingPlan.value) return;
+
+  isDeleteLoading.value = true;
+  try {
+    await planApi.deletePlan(deletingPlan.value.id);
+    deletingPlan.value = null;
+    await refresh();
+  } catch (error) {
+    console.error('Failed to delete plan:', error);
+  } finally {
+    isDeleteLoading.value = false;
+  }
 }
 </script>
 
@@ -35,8 +63,11 @@ async function handlePlanDeleted() {
     <!-- Header and controls -->
     <header class="flex items-center justify-between">
       <h1 class="text-3xl font-bold tracking-tight">Your Plans</h1>
-      <!-- TODO: CreatePlanDialog @created="handlePlanCreated" -->
-      <Button>New Plan</Button>
+
+      <Button @click="isCreateModalOpen = true">
+        <Plus class="h-4 w-4 mr-1" />
+        Create Plan
+      </Button>
     </header>
 
     <!-- No plans -->
@@ -60,21 +91,83 @@ async function handlePlanDeleted() {
           <CardTitle class="text-lg font-medium">{{ plan.name }}</CardTitle>
 
           <div class="flex items-center gap-1">
-            <!-- TODO: EditPlanButton -->
-            <!-- TODO: DeletePlanButton -->
+            <Button
+              size="icon"
+              variant="ghost"
+              title="Edit plan settings"
+              @click.prevent="editingPlan = plan"
+            >
+              <SettingsIcon />
+              <span class="sr-only">Edit plan</span>
+            </Button>
+
+            <Button
+              size="icon"
+              variant="ghost"
+              title="Delete plan"
+              class="text-muted-foreground hover:text-destructive"
+              @click.prevent="deletingPlan = plan"
+            >
+              <Trash2 />
+              <span class="sr-only">Delete plan</span>
+            </Button>
           </div>
         </CardHeader>
 
         <CardContent>
-          <div class="text-xs text-muted-foreground mb-4">
-            Created {{ new Date(plan.createdAt).toLocaleDateString() }}
-          </div>
-
-          <Button as-child class="w-full">
-            <NuxtLink :to="`/plan/${plan.id}`">Open Plan</NuxtLink>
-          </Button>
+          <NuxtLink :to="`/plan/${plan.id}`" class="w-full">
+            <Button class="w-full">Open Plan</Button>
+          </NuxtLink>
         </CardContent>
       </Card>
     </div>
+
+    <!-- Create plan modal -->
+    <PlanFormModal
+      :open="isCreateModalOpen"
+      title="Create New Plan"
+      submit-label="Create Plan"
+      @close="isCreateModalOpen = false"
+      @success="handlePlanCreated"
+    />
+
+    <!-- Edit plan modal -->
+    <PlanFormModal
+      v-if="editingPlan"
+      :open="!!editingPlan"
+      :plan-id="editingPlan.id"
+      title="Edit Plan"
+      :initial-data="editingPlan"
+      submit-label="Save Changes"
+      @close="editingPlan = null"
+      @success="handlePlanUpdated"
+    />
+
+    <!-- Delete dialog -->
+    <AlertDialog :open="!!deletingPlan">
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Plan</AlertDialogTitle>
+
+          <AlertDialogDescription>
+            Are you sure you want to delete "{{ deletingPlan?.name }}"?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel :disabled="isDeleteLoading" @click="deletingPlan = null">
+            Cancel
+          </AlertDialogCancel>
+
+          <AlertDialogAction
+            :disabled="isDeleteLoading"
+            class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            @click.prevent="handleDeletePlan"
+          >
+            {{ isDeleteLoading ? 'Deleting...' : 'Delete' }}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
 </template>

@@ -1,0 +1,207 @@
+<script setup lang="ts">
+import { Plus } from 'lucide-vue-next';
+import { formatAbbreviatedDisplayMoney } from '@/lib/money-utils';
+import type { Plan } from '@/features/plan/plan';
+import { sortEntities } from '@/features/entity/utils';
+import type { Entity } from '@/features/entity/entity';
+import { useEntityApi } from '@/features/entity/composables/use-entity-api';
+import { AccountEntity } from '@/features/entity/entity-types/account-entity';
+import { FallbackEntity } from '@/features/entity/entity-types/fallback-entity';
+import { IncomeEntity } from '@/features/entity/entity-types/income-entity';
+import { ExpenseEntity } from '@/features/entity/entity-types/expense-entity';
+import EntityFormModal from '@/features/entity/components/EntityFormModal.vue';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import EntityItem from './EntityItem.vue';
+
+const props = defineProps<{
+  planId: string;
+  plan: Plan;
+  filteredPlan: Plan;
+  activeEntityIds: Set<string>;
+  mutedEntityIds: Set<string>;
+  soloedEntityIds: Set<string>;
+}>();
+
+const emit = defineEmits<{
+  mute: [entityId: string];
+  solo: [entityId: string];
+  'entity-created': [entity: Entity];
+  'entity-updated': [entity: Entity];
+  'entity-deleted': [entityId: string];
+}>();
+
+const entityApi = useEntityApi();
+
+const editingEntity = ref<Entity | null>(null);
+const deletingEntity = ref<Entity | null>(null);
+const isCreateModalOpen = ref(false);
+const isDeleting = ref(false);
+
+const displayEntities = computed(() => {
+  const allEntities = props.plan.entities.filter(e => !(e instanceof FallbackEntity));
+  return sortEntities(allEntities);
+});
+
+// Find fallback entity on full plan, and use filtered simulation to get its value
+const cashEntity = computed(() => props.plan.entities.find(e => e instanceof FallbackEntity));
+const cashValue = computed(() =>
+  cashEntity.value ? props.filteredPlan.getEntityValue(cashEntity.value) : 0,
+);
+
+// Get display value for an entity from Plan simulation, income and expense will show a ledger value
+function getDisplayValue(entityId: string): string {
+  const entity = props.filteredPlan.entities.find(e => e.id === entityId);
+  if (!entity) return '';
+
+  let value: number;
+  if (entity instanceof IncomeEntity || entity instanceof ExpenseEntity) {
+    // Show the payment amount from the last ledger entry
+    const ledgerEntry = entity.ledger ? entity.ledger[entity.ledger.length - 1] : null;
+    value = ledgerEntry?.amount ?? 0;
+  } else {
+    value = props.filteredPlan.getEntityValue(entity);
+  }
+
+  return value ? formatAbbreviatedDisplayMoney(value) : '';
+}
+
+const availableParents = computed(() =>
+  props.plan.entities.map(e => ({ id: e.id, name: e.name })),
+);
+
+const availableAccounts = computed(() =>
+  props.plan.entities
+    .filter(e => e instanceof AccountEntity)
+    .map(e => ({ id: e.id, name: e.name })),
+);
+
+function handleEntityCreated(entity: Entity) {
+  emit('entity-created', entity);
+  isCreateModalOpen.value = false;
+}
+
+function handleEntityUpdated(entity: Entity) {
+  emit('entity-updated', entity);
+  editingEntity.value = null;
+}
+
+async function handleDelete() {
+  if (!deletingEntity.value) return;
+
+  isDeleting.value = true;
+  try {
+    await entityApi.deleteEntity(deletingEntity.value.id);
+    emit('entity-deleted', deletingEntity.value.id);
+    deletingEntity.value = null;
+  } catch (error) {
+    console.error('Failed to delete entity', error);
+  } finally {
+    isDeleting.value = false;
+  }
+}
+</script>
+
+<template>
+  <div>
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-lg font-semibold">Entities</h3>
+      <div class="flex items-center gap-6">
+        <div v-if="cashValue" class="text-md flex gap-1">
+          Cash: <span class="font-semibold">{{ formatAbbreviatedDisplayMoney(cashValue) }}</span>
+        </div>
+
+        <Button class="gap-1" @click="isCreateModalOpen = true">
+          <Plus class="h-4 w-4" />
+          Create
+        </Button>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div v-if="displayEntities.length === 0" class="text-center py-8 text-muted-foreground">
+      <div>No entities.</div>
+      <div class="text-sm">Create one.</div>
+    </div>
+
+    <!-- Entity list -->
+    <div v-else class="flex flex-col gap-2">
+      <EntityItem
+        v-for="entity in displayEntities"
+        :key="entity.id"
+        :entity="entity"
+        :display-name="entity.name"
+        :display-value="getDisplayValue(entity.id)"
+        :is-active="activeEntityIds.has(entity.id)"
+        :is-child="!!entity.parentId"
+        :is-muted="mutedEntityIds.has(entity.id)"
+        :is-soloed="soloedEntityIds.has(entity.id)"
+        @mute="emit('mute', $event)"
+        @solo="emit('solo', $event)"
+        @edit="editingEntity = entity"
+        @delete="deletingEntity = entity"
+      />
+    </div>
+
+    <!-- Create modal -->
+    <EntityFormModal
+      :open="isCreateModalOpen"
+      title="Create Entity"
+      :plan-id="planId"
+      :available-parents="availableParents"
+      :available-accounts="availableAccounts"
+      @close="isCreateModalOpen = false"
+      @success="handleEntityCreated"
+    />
+
+    <!-- Edit modal -->
+    <EntityFormModal
+      v-if="editingEntity"
+      :open="!!editingEntity"
+      title="Edit Entity"
+      :plan-id="planId"
+      :entity-id="editingEntity.id"
+      :initial-entity="editingEntity"
+      :available-parents="availableParents"
+      :available-accounts="availableAccounts"
+      @close="editingEntity = null"
+      @success="handleEntityUpdated"
+    />
+
+    <!-- Delete dialog -->
+    <AlertDialog :open="!!deletingEntity">
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete Entity</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to delete "{{ deletingEntity?.name }}"?
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <AlertDialogCancel :disabled="isDeleting" @click="deletingEntity = null">
+            Cancel
+          </AlertDialogCancel>
+
+          <AlertDialogAction
+            :disabled="isDeleting"
+            class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            @click.prevent="handleDelete"
+          >
+            {{ isDeleting ? 'Deleting...' : 'Delete' }}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  </div>
+</template>

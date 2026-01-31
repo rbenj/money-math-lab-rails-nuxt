@@ -5,19 +5,35 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['@/assets/css/main.css'],
 
-  modules: [
-    '@nuxtjs/color-mode'
-  ],
-
   runtimeConfig: {
     public: {
       apiBase: process.env.API_BASE || 'http://localhost:3001/api/v1',
-    }
+    },
   },
+
+  // Exclude shadcn-vue barrel files from auto-import to avoid duplicate registration warnings
+  components: {
+    dirs: [
+      {
+        path: '~/components',
+        ignore: ['**/index.ts'],
+      },
+    ],
+  },
+
+  postcss: {
+    plugins: {
+      '@tailwindcss/postcss': {},
+    },
+  },
+
+  modules: [
+    '@nuxtjs/color-mode',
+  ],
 
   colorMode: {
     classSuffix: '',
     preference: 'system',
     fallback: 'light',
   },
-})
+});

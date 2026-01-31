@@ -1,10 +1,4 @@
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  createdAt?: string;
-  updatedAt?: string;
-};
+import type { User } from '@/features/user/types';
 
 export function useAuth() {
   const user = useState<User | null>('user', () => null);

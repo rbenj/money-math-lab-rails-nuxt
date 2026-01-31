@@ -1,35 +1,38 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
-import { LogOut } from 'lucide-vue-next';
+import { APP_VERSION } from '@/constants';
 
-const { user, logout } = useAuth();
+const currentYear = new Date().getFullYear();
 </script>
 
 <template>
-  <div class="min-h-screen bg-background">
-    <!-- Header -->
-    <header class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div class="container flex h-14 items-center justify-between">
-        <NuxtLink to="/plans" class="font-semibold">
-          Money Math Lab
-        </NuxtLink>
+  <main class="min-h-screen flex flex-col">
+    <div class="flex-1 flex flex-col w-full">
+      <!-- Nav -->
+      <nav class="sticky top-0 z-50 h-20 w-full bg-background">
+        <div class="flex justify-between items-center w-full px-6 py-3">
+          <Logo />
 
-        <div class="flex items-center gap-4">
-          <ThemeSwitcher />
+          <div class="flex items-center">
+            <FullscreenToggle />
 
-          <template v-if="user">
-            <span class="text-sm text-muted-foreground">{{ user.email }}</span>
-            <Button variant="ghost" size="icon" @click="logout" title="Logout">
-              <LogOut class="h-4 w-4" />
-            </Button>
-          </template>
+            <ThemeSwitcher />
+
+            <AvatarMenu class="ml-3" />
+          </div>
         </div>
-      </div>
-    </header>
+      </nav>
 
-    <!-- Main Content -->
-    <main>
-      <slot />
-    </main>
-  </div>
+      <!-- Main -->
+      <div class="flex-1 w-full h-full max-w-[1700px] mx-auto">
+        <slot />
+      </div>
+
+      <!-- Footer -->
+      <footer class="flex items-center justify-between w-full p-6 text-xs text-muted-foreground">
+        <div>&copy; {{ currentYear }} All Rights Reserved</div>
+
+        <div>Version {{ APP_VERSION }}</div>
+      </footer>
+    </div>
+  </main>
 </template>
