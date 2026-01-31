@@ -308,13 +308,15 @@ const chartOptions = computed(() => ({
     </h3>
 
     <div class="aspect-2/1 min-h-[300px] w-full">
-      <Chart
-        v-if="colorsLoaded"
-        type="bar"
-        :data="chartData"
-        :options="chartOptions"
-        :plugins="[annotationPlugin]"
-      />
+      <ClientOnly>
+        <Chart
+          v-if="colorsLoaded"
+          type="bar"
+          :data="chartData"
+          :options="chartOptions"
+          :plugins="[annotationPlugin]"
+        />
+      </ClientOnly>
     </div>
   </div>
 </template>

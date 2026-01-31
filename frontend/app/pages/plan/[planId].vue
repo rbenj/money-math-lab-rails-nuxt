@@ -116,28 +116,26 @@ function handleEntityDeleted(entityId: string) {
   <div class="flex h-full flex-col gap-8 px-4 lg:flex-row lg:gap-14 lg:px-12">
     <!-- Left -->
     <aside class="order-2 h-full w-full pt-4 lg:order-1 lg:w-2/5 xl:w-1/3">
-      <ClientOnly>
-        <EntitiesList
-          :plan-id="route.params.planId as string"
-          :plan="plan"
-          :filtered-plan="filteredPlan"
-          :active-entity-ids="activeEntityIds"
-          :muted-entity-ids="mutedEntityIds"
-          :soloed-entity-ids="soloedEntityIds"
-          @mute="handleMute"
-          @solo="handleSolo"
-          @entity-created="handleEntityCreated"
-          @entity-updated="handleEntityUpdated"
-          @entity-deleted="handleEntityDeleted"
-        />
-      </ClientOnly>
+      <EntitiesList
+        :plan-id="route.params.planId as string"
+        :plan="plan"
+        :filtered-plan="filteredPlan"
+        :active-entity-ids="activeEntityIds"
+        :muted-entity-ids="mutedEntityIds"
+        :soloed-entity-ids="soloedEntityIds"
+        @mute="handleMute"
+        @solo="handleSolo"
+        @entity-created="handleEntityCreated"
+        @entity-updated="handleEntityUpdated"
+        @entity-deleted="handleEntityDeleted"
+      />
     </aside>
 
     <!-- Right -->
     <section class="order-1 flex-1 lg:order-2">
       <!-- Sticky container -->
       <div class="flex flex-col gap-8 pt-3 lg:sticky lg:top-20">
-        <!-- Header -->
+        <!-- Plan header -->
         <header
           class="items-between flex flex-col pb-2 xl:flex-row xl:items-start xl:justify-between"
         >
@@ -177,15 +175,10 @@ function handleEntityDeleted(entityId: string) {
           <div
             class="z-2 mt-6 -mb-16 flex items-center justify-end gap-6 xl:m-0 xl:justify-start xl:pt-1"
           >
-            <ClientOnly>
-              <div
-                class="text-muted-foreground flex items-center gap-1 text-sm"
-                title="Current age"
-              >
-                <Cake class="h-6 w-6" />
-                <span>{{ currentAge }}</span>
-              </div>
-            </ClientOnly>
+            <div class="text-muted-foreground flex items-center gap-1 text-sm" title="Current age">
+              <Cake class="h-6 w-6" />
+              <span>{{ currentAge }}</span>
+            </div>
 
             <div
               class="text-muted-foreground flex items-center gap-1 text-sm"
@@ -206,10 +199,9 @@ function handleEntityDeleted(entityId: string) {
           </div>
         </header>
 
-        <ClientOnly>
-          <SimulationChart :plan="filteredPlan" />
-          <MetricsGrid :plan="filteredPlan" />
-        </ClientOnly>
+        <!-- Plan content -->
+        <SimulationChart :plan="filteredPlan" />
+        <MetricsGrid :plan="filteredPlan" />
       </div>
     </section>
 
