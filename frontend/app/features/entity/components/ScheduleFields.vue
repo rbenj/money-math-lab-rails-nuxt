@@ -2,7 +2,7 @@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScheduleType } from '@/lib/schedule';
-import { type ScheduleFormData } from '../types';
+import type { ScheduleFormData } from '../types';
 
 const SCHEDULE_TYPES = Object.entries(ScheduleType).map(([label, value]) => ({
   value: value as ScheduleType,

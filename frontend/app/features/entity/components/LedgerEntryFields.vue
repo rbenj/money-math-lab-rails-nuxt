@@ -68,10 +68,10 @@ const displayEntries = computed(() =>
     <div class="flex items-center justify-between">
       <Label class="font-medium">Ledger Entries</Label>
       <Button
-        @click="handleAddEntry"
         size="sm"
         type="button"
         variant="outline"
+        @click="handleAddEntry"
       >
         Add Entry
       </Button>

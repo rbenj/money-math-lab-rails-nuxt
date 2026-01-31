@@ -32,10 +32,10 @@ onUnmounted(() => {
 <template>
   <Button
     :title="isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'"
-    @click="toggleFullscreen"
     class="hidden text-muted-foreground hover:bg-transparent lg:block"
     size="icon-sm"
     variant="ghost"
+    @click="toggleFullscreen"
   >
     <Minimize2 v-if="isFullscreen" />
     <Maximize2 v-else />

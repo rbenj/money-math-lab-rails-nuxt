@@ -103,8 +103,8 @@ function handleClose() {
             <Label for="name">Plan Name</Label>
             <Input
               id="name"
-              required
               v-model="formData.name"
+              required
             />
           </div>
 
@@ -120,9 +120,9 @@ function handleClose() {
               <div class="space-y-2">
                 <Label for="birthMonth">Month</Label>
                 <select
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   id="birthMonth"
                   v-model.number="formData.birthMonth"
+                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <option value="">Select</option>
                   <option v-for="month in MONTHS" :key="month.value" :value="month.value">
@@ -134,9 +134,9 @@ function handleClose() {
               <div class="space-y-2">
                 <Label for="birthYear">Year</Label>
                 <select
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   id="birthYear"
                   v-model.number="formData.birthYear"
+                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <option value="">Select</option>
                   <option v-for="year in BIRTH_YEARS" :key="year" :value="year">
@@ -151,10 +151,10 @@ function handleClose() {
             <Label for="retirementAge">Retirement Age</Label>
             <Input
               id="retirementAge"
+              v-model.number="formData.retirementAge"
               max="120"
               min="10"
               type="number"
-              v-model.number="formData.retirementAge"
             />
             <div class="text-sm text-muted-foreground">
               Your planned retirement age
@@ -164,10 +164,10 @@ function handleClose() {
           <div v-if="isCreating" class="flex items-center gap-2 p-3 border rounded-md bg-muted/50">
             <input
               id="useExample"
-              type="checkbox"
               v-model="useExampleData"
+              type="checkbox"
               class="h-4 w-4 rounded border-input"
-            />
+            >
             <Label for="useExample" class="cursor-pointer">
               <span class="font-medium">Start with example data</span>
               <span class="block text-sm text-muted-foreground">
@@ -178,9 +178,9 @@ function handleClose() {
 
           <div class="flex justify-end gap-2 pt-4">
             <Button
-              @click="handleClose"
               type="button"
               variant="outline"
+              @click="handleClose"
             >
               Cancel
             </Button>

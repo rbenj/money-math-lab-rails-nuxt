@@ -2,7 +2,7 @@ import { dateToEpochDay, epochDayToDate, createEpochDay } from '@/lib/date-utils
 import type { Entity } from '@/features/entity/entity';
 import { FallbackEntity } from '@/features/entity/entity-types/fallback-entity';
 import { Snapshot } from './snapshot';
-import { Transaction } from './transaction';
+import type { Transaction } from './transaction';
 
 export interface DataPoint {
   assets: number;

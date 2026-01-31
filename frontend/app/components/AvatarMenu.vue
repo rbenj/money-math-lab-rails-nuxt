@@ -52,7 +52,7 @@ async function handleLogout() {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem @click="handleLogout" class="text-destructive">
+            <DropdownMenuItem class="text-destructive" @click="handleLogout">
               Logout
             </DropdownMenuItem>
           </DropdownMenuGroup>

@@ -1,4 +1,4 @@
-import { Transaction } from '@/features/simulation/transaction';
+import type { Transaction } from '@/features/simulation/transaction';
 import type { SerializedEntity } from '../types';
 import { Entity } from '../entity';
 

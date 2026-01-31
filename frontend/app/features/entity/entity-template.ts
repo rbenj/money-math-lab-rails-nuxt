@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-vue-next';
-import { EntityType } from './types';
+import type { EntityType } from './types';
 
 export enum EntityCategory {
   Debt = 'debt',

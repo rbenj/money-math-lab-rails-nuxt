@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Chart } from 'vue-chartjs';
+import { Chart } from "vue-chartjs";
 import {
   Chart as ChartJS,
   BarElement,
@@ -9,11 +9,11 @@ import {
   CategoryScale,
   Tooltip,
   Legend,
-} from 'chart.js';
-import annotationPlugin from 'chartjs-plugin-annotation';
-import { epochDayToDate } from '@/lib/date-utils';
-import { formatAbbreviatedDisplayMoney, formatDisplayMoney } from '@/lib/money-utils';
-import type { Plan } from '@/features/plan/plan';
+} from "chart.js";
+import annotationPlugin from "chartjs-plugin-annotation";
+import { epochDayToDate } from "@/lib/date-utils";
+import { formatAbbreviatedDisplayMoney, formatDisplayMoney } from "@/lib/money-utils";
+import type { Plan } from "@/features/plan/plan";
 
 ChartJS.register(
   BarElement,
@@ -31,12 +31,12 @@ const props = defineProps<{
 }>();
 
 const chartColors = ref({
-  assets: '',
-  debt: '',
-  netWorth: '',
-  line: '',
-  text: '',
-  background: '',
+  assets: "",
+  debt: "",
+  netWorth: "",
+  line: "",
+  text: "",
+  background: "",
 });
 
 const colorsLoaded = ref(false);
@@ -44,12 +44,12 @@ const colorsLoaded = ref(false);
 onMounted(() => {
   const style = getComputedStyle(document.documentElement);
   chartColors.value = {
-    assets: style.getPropertyValue('--chart-1').trim() || 'oklch(0, 0, 0)',
-    debt: style.getPropertyValue('--chart-2').trim() || 'oklch(0, 0, 0)',
-    netWorth: style.getPropertyValue('--chart-3').trim() || 'oklch(0, 0, 0)',
-    line: style.getPropertyValue('--chart-4').trim() || 'oklch(0, 0, 0)',
-    text: style.getPropertyValue('--muted-foreground').trim() || 'oklch(0, 0, 0)',
-    background: style.getPropertyValue('--background').trim() || 'oklch(0, 0, 0)',
+    assets: style.getPropertyValue("--chart-1").trim() || "oklch(0, 0, 0)",
+    debt: style.getPropertyValue("--chart-2").trim() || "oklch(0, 0, 0)",
+    netWorth: style.getPropertyValue("--chart-3").trim() || "oklch(0, 0, 0)",
+    line: style.getPropertyValue("--chart-4").trim() || "oklch(0, 0, 0)",
+    text: style.getPropertyValue("--muted-foreground").trim() || "oklch(0, 0, 0)",
+    background: style.getPropertyValue("--background").trim() || "oklch(0, 0, 0)",
   };
   colorsLoaded.value = true;
 });
@@ -120,22 +120,12 @@ const findClosestAge = (targetAge: number): number => {
 const todayAgeInData = computed(() => findClosestAge(currentAge.value));
 const retirementAgeInData = computed(() => findClosestAge(props.plan.retirementAge));
 
-// Get the index of an age in the labels array (needed for category scale annotations)
-const todayIndex = computed(() => {
-  const labels = aggregatedData.value.map(d => d.age);
-  return labels.indexOf(todayAgeInData.value);
-});
-const retirementIndex = computed(() => {
-  const labels = aggregatedData.value.map(d => d.age);
-  return labels.indexOf(retirementAgeInData.value);
-});
-
 // Calculate Y domain and custom ticks (skip the first/min tick like the old version)
 const yDomain = computed(() => {
   const data = aggregatedData.value;
   if (data.length === 0) return { min: 0, max: 0 };
 
-  const values = data.flatMap(d => [d.assets, d.debt, d.netWorth]);
+  const values = data.flatMap((d) => [d.assets, d.debt, d.netWorth]);
   return {
     min: Math.min(...values),
     max: Math.max(...values),
@@ -154,9 +144,9 @@ const yTicks = computed(() => {
   const interval = (max - min) / (tickCount - 1);
 
   // Generate ticks and skip the first one (min value)
-  const ticks = Array.from({ length: tickCount }, (_, i) =>
-    Math.round(min + (interval * i)),
-  ).slice(1);
+  const ticks = Array.from({ length: tickCount }, (_, i) => Math.round(min + interval * i)).slice(
+    1,
+  );
 
   // Remove duplicates
   return [...new Set(ticks)];
@@ -167,30 +157,30 @@ const chartData = computed(() => {
   const data = aggregatedData.value;
 
   return {
-    labels: data.map(d => String(d.age)),
+    labels: data.map((d) => String(d.age)),
     datasets: [
       {
-        type: 'bar' as const,
-        label: 'Assets',
-        data: data.map(d => d.assets),
+        type: "bar" as const,
+        label: "Assets",
+        data: data.map((d) => d.assets),
         backgroundColor: chartColors.value.assets,
-        stack: 'stack',
+        stack: "stack",
         borderRadius: { topLeft: 4, topRight: 4, bottomLeft: 0, bottomRight: 0 },
         order: 2,
       },
       {
-        type: 'bar' as const,
-        label: 'Debt',
-        data: data.map(d => d.debt),
+        type: "bar" as const,
+        label: "Debt",
+        data: data.map((d) => d.debt),
         backgroundColor: chartColors.value.debt,
-        stack: 'stack',
+        stack: "stack",
         borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 4, bottomRight: 4 },
         order: 2,
       },
       {
-        type: 'line' as const,
-        label: 'Net Worth',
-        data: data.map(d => d.netWorth),
+        type: "line" as const,
+        label: "Net Worth",
+        data: data.map((d) => d.netWorth),
         borderColor: chartColors.value.netWorth,
         borderWidth: 3,
         pointRadius: 4,
@@ -215,18 +205,18 @@ const chartOptions = computed(() => ({
   },
   interaction: {
     intersect: false,
-    mode: 'index' as const,
+    mode: "index" as const,
   },
   plugins: {
     legend: { display: false },
     tooltip: {
       callbacks: {
-        title: () => '',
+        title: () => "",
         label: (context: { raw: number; dataset: { label: string }; label: string }) => {
           const value = Math.abs(context.raw);
           const name = context.dataset.label
-            .replace(/([A-Z])/g, ' $1')
-            .replace(/^./, str => str.toUpperCase());
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, (str) => str.toUpperCase());
           return `${name}: ${formatDisplayMoney(value)}`;
         },
       },
@@ -234,8 +224,8 @@ const chartOptions = computed(() => ({
     annotation: {
       annotations: {
         todayLine: {
-          type: 'line' as const,
-          drawTime: 'beforeDatasetsDraw',
+          type: "line" as const,
+          drawTime: "beforeDatasetsDraw",
           xMin: String(todayAgeInData.value),
           xMax: String(todayAgeInData.value),
           borderColor: chartColors.value.line,
@@ -243,8 +233,8 @@ const chartOptions = computed(() => ({
           borderDash: [5, 5],
           label: {
             display: true,
-            content: 'Today',
-            position: 'end',
+            content: "Today",
+            position: "end",
             yAdjust: 0,
             backgroundColor: chartColors.value.background,
             color: chartColors.value.line,
@@ -253,8 +243,8 @@ const chartOptions = computed(() => ({
           },
         },
         retirementLine: {
-          type: 'line' as const,
-          drawTime: 'beforeDatasetsDraw',
+          type: "line" as const,
+          drawTime: "beforeDatasetsDraw",
           xMin: String(retirementAgeInData.value),
           xMax: String(retirementAgeInData.value),
           borderColor: chartColors.value.line,
@@ -262,8 +252,8 @@ const chartOptions = computed(() => ({
           borderDash: [5, 5],
           label: {
             display: true,
-            content: 'Retirement',
-            position: 'end',
+            content: "Retirement",
+            position: "end",
             yAdjust: 0,
             backgroundColor: chartColors.value.background,
             color: chartColors.value.line,
@@ -290,7 +280,7 @@ const chartOptions = computed(() => ({
       stacked: true,
       grid: { display: false },
       border: { display: false },
-      position: 'left' as const,
+      position: "left" as const,
       min: yDomain.value.min,
       max: yDomain.value.max * 1.1,
       ticks: {
@@ -301,7 +291,7 @@ const chartOptions = computed(() => ({
       },
       afterBuildTicks: (axis: { ticks: Array<{ value: number }> }) => {
         // Replace auto ticks with our custom ticks (skipping the first/min)
-        axis.ticks = yTicks.value.map(value => ({ value }));
+        axis.ticks = yTicks.value.map((value) => ({ value }));
       },
     },
   },
@@ -310,11 +300,11 @@ const chartOptions = computed(() => ({
 
 <template>
   <div>
-    <h3 class="mb-8 text-xl font-semibold leading-none tracking-tight md:text-2xl lg:text-3xl">
+    <h3 class="mb-8 text-xl leading-none font-semibold tracking-tight md:text-2xl lg:text-3xl">
       Simulation
     </h3>
 
-    <div class="aspect-2/1 w-full min-h-[300px]">
+    <div class="aspect-2/1 min-h-[300px] w-full">
       <Chart
         v-if="colorsLoaded"
         type="bar"
