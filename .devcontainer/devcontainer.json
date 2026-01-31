@@ -15,6 +15,7 @@
         "bradlc.vscode-tailwindcss",
         "dbaeumer.vscode-eslint",
         "EditorConfig.EditorConfig",
+        "esbenp.prettier-vscode",
         "naumovs.color-highlight",
         "Shopify.ruby-lsp",
         "streetsidesoftware.code-spell-checker",
