@@ -1,8 +1,8 @@
 module Api
   module V1
     class LedgerEntriesController < BaseController
-      before_action :set_entity, only: [:index, :create]
-      before_action :set_ledger_entry, only: [:show, :update, :destroy]
+      before_action :set_entity, only: [ :index, :create ]
+      before_action :set_ledger_entry, only: [ :show, :update, :destroy ]
 
       def index
         render json: LedgerEntrySerializer.render(@entity.ledger_entries)

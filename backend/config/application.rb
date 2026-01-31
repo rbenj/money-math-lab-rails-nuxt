@@ -31,7 +31,7 @@ module Backend
 
     # Enable sessions for API mode (required for session-based auth)
     config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore, key: '_money_math_lab_session'
+    config.middleware.use ActionDispatch::Session::CookieStore, key: "_money_math_lab_session"
 
     # Ensure cookies work cross-origin
     config.action_dispatch.cookies_same_site_protection = :lax

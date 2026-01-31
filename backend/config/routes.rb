@@ -8,10 +8,10 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       # Auth
-      post 'register', to: 'sessions#register'
-      post 'login', to: 'sessions#create'
-      delete 'logout', to: 'sessions#destroy'
-      get 'me', to: 'sessions#show'
+      post "register", to: "sessions#register"
+      post "login", to: "sessions#create"
+      delete "logout", to: "sessions#destroy"
+      get "me", to: "sessions#show"
 
       # Resources
       resources :plans do

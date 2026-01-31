@@ -1,7 +1,7 @@
 module Api
   module V1
     class SessionsController < BaseController
-      skip_before_action :authenticate_user!, only: [:create, :register]
+      skip_before_action :authenticate_user!, only: [ :create, :register ]
 
       def show
         render json: UserSerializer.render(current_user)
@@ -14,7 +14,7 @@ module Api
           session[:user_id] = user.id
           render json: UserSerializer.render(user)
         else
-          render json: { error: 'Invalid email or password' }, status: :unauthorized
+          render json: { error: "Invalid email or password" }, status: :unauthorized
         end
       end
 

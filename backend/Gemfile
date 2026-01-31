@@ -50,7 +50,7 @@ group :development, :test do
 end
 
 # JSON serialization
-gem 'blueprinter'
+gem "blueprinter"
 
 # Password hashing for has_secure_password
-gem 'bcrypt'
+gem "bcrypt"

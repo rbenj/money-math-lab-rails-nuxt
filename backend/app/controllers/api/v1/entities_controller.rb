@@ -1,8 +1,8 @@
 module Api
   module V1
     class EntitiesController < BaseController
-      before_action :set_plan, only: [:index, :create]
-      before_action :set_entity, only: [:show, :update, :destroy]
+      before_action :set_plan, only: [ :index, :create ]
+      before_action :set_entity, only: [ :show, :update, :destroy ]
 
       def index
         entities = @plan.entities.includes(:ledger_entries)
@@ -50,7 +50,7 @@ module Api
         permitted = params.require(:entity).permit(
           :name, :type, :template_key, :parent_id,
           data: {},
-          ledger_entries_attributes: [:id, :day, :amount, :share_quantity, :share_price, :_destroy]
+          ledger_entries_attributes: [ :id, :day, :amount, :share_quantity, :share_price, :_destroy ]
         )
 
         # Map incoming 'type' to 'entity_type' for storage

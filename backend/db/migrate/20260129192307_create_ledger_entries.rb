@@ -11,6 +11,6 @@ class CreateLedgerEntries < ActiveRecord::Migration[8.1]
     end
 
     add_index :ledger_entries, :day
-    add_index :ledger_entries, [:entity_id, :day]
+    add_index :ledger_entries, [ :entity_id, :day ]
   end
 end

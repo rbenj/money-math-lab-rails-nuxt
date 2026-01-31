@@ -1,7 +1,7 @@
 module Api
   module V1
     class PlansController < BaseController
-      before_action :set_plan, only: [:show, :update, :destroy]
+      before_action :set_plan, only: [ :show, :update, :destroy ]
 
       def index
         plans = current_user.plans.order(updated_at: :desc)
@@ -17,7 +17,7 @@ module Api
 
         if plan.save
           # Add example entities if requested
-          if params[:use_example] == true || params[:use_example] == 'true'
+          if params[:use_example] == true || params[:use_example] == "true"
             ::ExamplePlanService.new(plan).call
           end
 
