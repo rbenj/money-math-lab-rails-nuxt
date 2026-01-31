@@ -11,7 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
-import { epochDayToDate } from "@/lib/date-utils";
+import { epochDayToDate, calculateAge, parseDateString } from "@/lib/date-utils";
 import { formatAbbreviatedDisplayMoney, formatDisplayMoney } from "@/lib/money-utils";
 import type { Plan } from "@/features/plan/plan";
 
@@ -54,8 +54,8 @@ onMounted(() => {
   colorsLoaded.value = true;
 });
 
-const birthYear = computed(() => new Date(props.plan.birthDate).getUTCFullYear());
-const currentAge = computed(() => new Date().getFullYear() - birthYear.value);
+const birthYear = computed(() => parseDateString(props.plan.birthDate).year);
+const currentAge = computed(() => calculateAge(props.plan.birthDate));
 
 // Build raw data from Plan simulation
 const rawData = computed(() => {

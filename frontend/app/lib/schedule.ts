@@ -1,3 +1,5 @@
+import { createUTCDayDate, formatDateString, parseDateString } from "./date-utils";
+
 export enum ScheduleType {
   Once = "once",
   Daily = "daily",
@@ -21,8 +23,8 @@ export interface SerializedSchedule {
   daysOfMonth?: number[];
   daysOfWeek?: number[];
   interval?: number;
-  startDate: string; // ISO string (YYYY-MM-DDTHH:MM:SS.000Z)
-  endDate?: string; // ISO string (YYYY-MM-DDTHH:MM:SS.000Z)
+  startDate: string; // YYYY-MM-DD
+  endDate?: string; // YYYY-MM-DD
 }
 
 export class Schedule {
@@ -38,13 +40,16 @@ export class Schedule {
    */
   public static fromSerialized(data: SerializedSchedule): Schedule {
     const typeStr = (data.type?.toLowerCase() ?? "monthly") as ScheduleType;
+    const start = parseDateString(data.startDate);
+    const end = data.endDate ? parseDateString(data.endDate) : undefined;
+
     return new Schedule({
       type: Object.values(ScheduleType).includes(typeStr) ? typeStr : ScheduleType.Monthly,
       daysOfMonth: data.daysOfMonth,
       daysOfWeek: data.daysOfWeek,
       interval: data.interval,
-      startDate: new Date(data.startDate),
-      endDate: data.endDate ? new Date(data.endDate) : undefined,
+      startDate: createUTCDayDate(start.year, start.month, start.day),
+      endDate: end ? createUTCDayDate(end.year, end.month, end.day) : undefined,
     });
   }
 
@@ -105,8 +110,8 @@ export class Schedule {
       daysOfMonth: this.daysOfMonth,
       daysOfWeek: this.daysOfWeek,
       interval: this.interval,
-      startDate: this.startDate.toISOString(),
-      endDate: this.endDate?.toISOString(),
+      startDate: formatDateString(this.startDate),
+      endDate: this.endDate ? formatDateString(this.endDate) : undefined,
     };
   }
 

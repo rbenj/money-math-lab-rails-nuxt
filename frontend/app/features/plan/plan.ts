@@ -1,4 +1,4 @@
-import { dateToEpochDay } from "@/lib/date-utils";
+import { calculateAge, createEpochDay, getTodayEpochDay, parseDateString } from "@/lib/date-utils";
 import type { Entity } from "@/features/entity/entity";
 import { deserializeEntities } from "@/features/entity/serialization";
 import { ExpenseEntity } from "@/features/entity/entity-types/expense-entity";
@@ -50,7 +50,7 @@ export class Plan {
     this.retirementAge = input.retirementAge;
     this.entities = input.entities ?? [];
 
-    this.todayDay = dateToEpochDay(new Date());
+    this.todayDay = getTodayEpochDay();
   }
 
   /**
@@ -76,9 +76,7 @@ export class Plan {
     // Add fallback entity and run simulation
     const entities = [new FallbackEntity(), ...this.entities];
 
-    const birthYear = new Date(this.birthDate).getUTCFullYear();
-    const currentYear = new Date().getFullYear();
-    const currentAge = currentYear - birthYear;
+    const currentAge = calculateAge(this.birthDate);
     const targetAge = this.retirementAge + YEARS_PAST_RETIREMENT;
     const projectionYears = Math.max(1, targetAge - currentAge);
 
@@ -140,12 +138,8 @@ export class Plan {
    * Get the normalized retirement day based on birth date and retirement age.
    */
   public getRetirementDay(): number {
-    const birth = new Date(this.birthDate);
-    const retirementYear = birth.getUTCFullYear() + this.retirementAge;
-    const retirementDate = new Date(
-      Date.UTC(retirementYear, birth.getUTCMonth(), birth.getUTCDate()),
-    );
-    return dateToEpochDay(retirementDate);
+    const { year, month, day } = parseDateString(this.birthDate);
+    return createEpochDay(year + this.retirementAge, month, day);
   }
 
   /**

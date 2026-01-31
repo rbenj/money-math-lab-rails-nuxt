@@ -1,4 +1,9 @@
-import { dateToEpochDay, epochDayToDate, getLastDaysOfMonthsInRange } from "@/lib/date-utils";
+import {
+  dateToEpochDay,
+  epochDayToDate,
+  getLastDaysOfMonthsInRange,
+  getTodayDateString,
+} from "@/lib/date-utils";
 import { Schedule, ScheduleType, type SerializedSchedule } from "@/lib/schedule";
 import { Transaction } from "@/features/simulation/transaction";
 import type { Snapshot } from "@/features/simulation/snapshot";
@@ -42,7 +47,7 @@ export class DebtEntity extends Entity {
         : Schedule.fromSerialized({
             type: ScheduleType.Monthly,
             daysOfMonth: [1],
-            startDate: new Date().toISOString(),
+            startDate: getTodayDateString(),
           }),
       paymentSourceEntityId: (data.data.paymentSourceEntityId as string) ?? "",
     });

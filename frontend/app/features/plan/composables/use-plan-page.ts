@@ -1,4 +1,4 @@
-import { calculateAgeFromDate } from "@/lib/date-utils";
+import { calculateAge } from "@/lib/date-utils";
 import { isEntityActive } from "@/features/entity/utils";
 import type { Entity } from "@/features/entity/entity";
 import type { SerializedPlanSummary } from "../types";
@@ -23,7 +23,7 @@ export async function usePlanPage(planId: string) {
   const mutedEntityIds = ref(new Set<string>());
   const soloedEntityIds = ref(new Set<string>());
 
-  const currentAge = computed(() => calculateAgeFromDate(new Date(), birthDate.value));
+  const currentAge = computed(() => calculateAge(birthDate.value));
 
   const plan = computed(
     () =>

@@ -55,11 +55,17 @@ export function dateStringToEpochDay(dateString: string): number {
 }
 
 /**
+ * Get today as epoch day.
+ */
+export function getTodayEpochDay(): number {
+  return dateToEpochDay(new Date());
+}
+
+/**
  * Get today's date as YYYY-MM-DD string.
  */
 export function getTodayDateString(): string {
-  const today = new Date();
-  return formatDateString(today);
+  return formatDateString(new Date());
 }
 
 /**
@@ -132,24 +138,24 @@ export function birthDateStringToMonthYear(dateStr: string | null | undefined): 
 }
 
 /**
- * Calculate age from birth date string.
+ * Calculate age from birth date string (YYYY-MM-DD).
  */
-export function calculateAgeFromDate(today: Date, birthDate: string | null | undefined): number {
+export function calculateAge(birthDate: string | null | undefined): number {
+  const today = new Date();
+  const todayYear = today.getUTCFullYear();
+  const todayMonth = today.getUTCMonth();
+  const todayDay = today.getUTCDate();
+
   if (!birthDate) {
-    return today.getFullYear() - DEFAULT_BIRTH_YEAR;
+    return todayYear - DEFAULT_BIRTH_YEAR;
   }
 
-  const birth = new Date(birthDate);
+  const { year: birthYear, month: birthMonth, day: birthDay } = parseDateString(birthDate);
 
-  let age = today.getFullYear() - birth.getUTCFullYear();
+  let age = todayYear - birthYear;
 
   // If birthday hasn't occurred yet this year, subtract 1
-  const birthMonth = birth.getUTCMonth();
-  const currentMonth = today.getMonth();
-  if (
-    currentMonth < birthMonth ||
-    (currentMonth === birthMonth && today.getDate() < birth.getUTCDate())
-  ) {
+  if (todayMonth + 1 < birthMonth || (todayMonth + 1 === birthMonth && todayDay < birthDay)) {
     age -= 1;
   }
 

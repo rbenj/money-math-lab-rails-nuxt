@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Trash2 } from "lucide-vue-next";
+import { getTodayDateString } from "@/lib/date-utils";
 import { EntityType, type LedgerEntryFormData } from "../types";
 
 const props = defineProps<{
@@ -27,14 +28,10 @@ function handleEntryChange(
 }
 
 function handleAddEntry() {
-  const today = new Date();
-  const year = today.getUTCFullYear();
-  const month = String(today.getUTCMonth() + 1).padStart(2, "0");
-  const day = String(today.getUTCDate()).padStart(2, "0");
-
+  const today = getTodayDateString();
   const newEntry: LedgerEntryFormData = isHolding.value
-    ? { day: `${year}-${month}-${day}`, shareQuantity: 0, sharePrice: 0 }
-    : { day: `${year}-${month}-${day}`, amount: 0 };
+    ? { day: today, shareQuantity: 0, sharePrice: 0 }
+    : { day: today, amount: 0 };
 
   emit("update:modelValue", [...props.modelValue, newEntry]);
 }

@@ -1,4 +1,4 @@
-import { dateToEpochDay, epochDayToDate } from "@/lib/date-utils";
+import { dateToEpochDay, epochDayToDate, getTodayDateString } from "@/lib/date-utils";
 import { Schedule, ScheduleType, type SerializedSchedule } from "@/lib/schedule";
 import { Transaction } from "@/features/simulation/transaction";
 import { EntityType, type SerializedEntity } from "../types";
@@ -38,7 +38,7 @@ export class IncomeEntity extends Entity {
         : Schedule.fromSerialized({
             type: ScheduleType.Monthly,
             daysOfMonth: [1],
-            startDate: new Date().toISOString(),
+            startDate: getTodayDateString(),
           }),
       targetEntityId: (data.data.targetEntityId as string) ?? "",
     });

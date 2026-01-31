@@ -1,4 +1,4 @@
-import { dateToEpochDay, epochDayToDate, createEpochDay } from "@/lib/date-utils";
+import { createEpochDay, epochDayToDate, getTodayEpochDay } from "@/lib/date-utils";
 import type { Entity } from "@/features/entity/entity";
 import { FallbackEntity } from "@/features/entity/entity-types/fallback-entity";
 import { Snapshot } from "./snapshot";
@@ -56,8 +56,7 @@ export class Simulation {
     }
 
     if (!earliestDay) {
-      const now = new Date();
-      earliestDay = dateToEpochDay(now);
+      earliestDay = getTodayEpochDay();
     }
 
     this.startDay = earliestDay;
