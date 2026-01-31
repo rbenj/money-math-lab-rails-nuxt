@@ -29,6 +29,27 @@ const {
 
 const isSettingsOpen = ref(false);
 
+const metrics = computed(() => [
+  {
+    title: "Assets",
+    value: filteredPlan.value.getAssetsForToday(),
+    previousValue: filteredPlan.value.getAssetsForLastYear(),
+    trendLabel: "from last year",
+  },
+  {
+    title: "Debt",
+    value: filteredPlan.value.getDebtForToday(),
+    previousValue: filteredPlan.value.getDebtForLastYear(),
+    trendLabel: "from last year",
+  },
+  {
+    title: "Net Worth",
+    value: filteredPlan.value.getNetWorthForToday(),
+    previousValue: filteredPlan.value.getNetWorthForLastYear(),
+    trendLabel: "from last year",
+  },
+]);
+
 function onPlanUpdated(summary: SerializedPlanSummary) {
   handlePlanUpdated(summary);
   isSettingsOpen.value = false;
@@ -123,7 +144,7 @@ function onPlanUpdated(summary: SerializedPlanSummary) {
 
         <!-- Plan content -->
         <SimulationChart :plan="filteredPlan" />
-        <MetricsGrid :plan="filteredPlan" />
+        <MetricsGrid :metrics="metrics" />
       </div>
     </section>
 

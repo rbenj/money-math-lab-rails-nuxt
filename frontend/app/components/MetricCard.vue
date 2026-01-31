@@ -2,17 +2,23 @@
 import { TrendingUp, TrendingDown } from "lucide-vue-next";
 import { formatDisplayMoney } from "@/lib/money-utils";
 
-const props = defineProps<{
-  title: string;
-  value: number;
-  previousValue: number;
-}>();
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    value: number;
+    previousValue: number;
+    trendLabel?: string;
+  }>(),
+  {
+    trendLabel: "from previous period",
+  },
+);
 
 const formattedValue = computed(() => formatDisplayMoney(Math.abs(props.value)));
 const isUp = computed(() => props.value >= props.previousValue);
-
-const trendLabel = computed(() => (isUp.value ? "Up from last year" : "Down from last year"));
 const TrendIcon = computed(() => (isUp.value ? TrendingUp : TrendingDown));
+
+const trendDirection = computed(() => (isUp.value ? "Up" : "Down"));
 
 const percentChange = computed(() => {
   if (!props.previousValue) return 0;
@@ -46,7 +52,7 @@ const formattedPercent = computed(() => {
 
     <CardFooter>
       <div class="text-card-alt-muted-foreground flex gap-2">
-        {{ trendLabel }}
+        {{ trendDirection }} {{ trendLabel }}
         <component :is="TrendIcon" class="text-card-alt-foreground h-5 w-5" />
       </div>
     </CardFooter>
