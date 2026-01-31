@@ -3,13 +3,6 @@ import { MoreVertical, Pencil, Trash2 } from "lucide-vue-next";
 import { cn } from "@/lib/utils";
 import type { Entity } from "@/features/entity/entity";
 import { getEntityTemplate } from "@/features/entity/entity-templates";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const props = defineProps<{
   entity: Entity;

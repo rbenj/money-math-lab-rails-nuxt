@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Maximize2, Minimize2 } from "lucide-vue-next";
-import { Button } from "@/components/ui/button";
 
 const isFullscreen = ref(false);
 

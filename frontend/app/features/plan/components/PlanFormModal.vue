@@ -8,10 +8,6 @@ import {
   DEFAULT_RETIREMENT_AGE,
 } from "@/constants";
 import { birthDateStringToMonthYear } from "@/lib/date-utils";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import type { SerializedPlanSummary } from "../types";
 import { usePlanForm } from "../composables/use-plan-form";
 

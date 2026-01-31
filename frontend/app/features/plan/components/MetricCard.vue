@@ -1,15 +1,6 @@
 <script setup lang="ts">
 import { TrendingUp, TrendingDown } from "lucide-vue-next";
 import { formatDisplayMoney } from "@/lib/money-utils";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 const props = defineProps<{
   title: string;

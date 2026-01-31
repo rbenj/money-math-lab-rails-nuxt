@@ -10,17 +10,6 @@ import { FallbackEntity } from "@/features/entity/entity-types/fallback-entity";
 import { IncomeEntity } from "@/features/entity/entity-types/income-entity";
 import { ExpenseEntity } from "@/features/entity/entity-types/expense-entity";
 import EntityFormModal from "@/features/entity/components/EntityFormModal.vue";
-import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import EntityItem from "./EntityItem.vue";
 
 const props = defineProps<{

@@ -1,17 +1,5 @@
 <script setup lang="ts">
 import { Plus, Settings as SettingsIcon, Trash2 } from "lucide-vue-next";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import type { SerializedPlanSummary } from "@/features/plan/types";
 import { usePlanApi } from "@/features/plan/composables/use-plan-api";
 import PlanFormModal from "@/features/plan/components/PlanFormModal.vue";
