@@ -11,23 +11,18 @@ export default defineNuxtConfig({
     },
   },
 
-  // Exclude shadcn-vue barrel files from auto-import to avoid duplicate registration warnings
-  components: {
-    dirs: [
-      {
-        path: "~/components",
-        ignore: ["**/index.ts"],
-      },
-    ],
-  },
-
   postcss: {
     plugins: {
       "@tailwindcss/postcss": {},
     },
   },
 
-  modules: ["@nuxtjs/color-mode"],
+  modules: ["@nuxtjs/color-mode", "shadcn-nuxt"],
+
+  shadcn: {
+    prefix: "",
+    componentDir: "./app/components/ui",
+  },
 
   colorMode: {
     classSuffix: "",
