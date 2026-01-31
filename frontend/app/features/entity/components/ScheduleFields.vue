@@ -63,16 +63,19 @@ function update(updates: Partial<ScheduleFormData>) {
     <div class="grid grid-cols-2 gap-3">
       <div class="space-y-1">
         <Label for="schedule-type" class="text-xs">Type</Label>
-        <select
-          id="schedule-type"
-          :value="modelValue.type"
-          class="border-input bg-background h-9 w-full rounded-md border px-3 py-1 text-sm"
-          @change="handleTypeChange(($event.target as HTMLSelectElement).value)"
+        <Select
+          :model-value="modelValue.type"
+          @update:model-value="handleTypeChange(String($event))"
         >
-          <option v-for="type in SCHEDULE_TYPES" :key="type.value" :value="type.value">
-            {{ type.label }}
-          </option>
-        </select>
+          <SelectTrigger id="schedule-type" class="w-full" size="sm">
+            <SelectValue placeholder="Select type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem v-for="type in SCHEDULE_TYPES" :key="type.value" :value="type.value">
+              {{ type.label }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div class="space-y-1">

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { X } from "lucide-vue-next";
 import {
   MONTHS,
   BIRTH_YEARS,
@@ -70,102 +69,101 @@ function handleClose() {
 </script>
 
 <template>
-  <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
-    <!-- Backdrop -->
-    <div class="bg-background/80 absolute inset-0 backdrop-blur-sm" @click="handleClose" />
+  <Dialog :open="open" @update:open="(val) => !val && handleClose()">
+    <DialogScrollContent class="max-w-md">
+      <DialogHeader>
+        <DialogTitle>{{ title }}</DialogTitle>
 
-    <!-- Modal -->
-    <div
-      class="bg-background relative m-4 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg border shadow-lg"
-    >
-      <!-- Header -->
-      <header class="bg-background sticky top-0 flex items-center justify-between border-b p-4">
-        <h2 class="text-lg font-semibold">{{ title }}</h2>
+        <DialogDescription class="sr-only">
+          {{ isCreating ? "Create a new financial plan" : "Edit your plan settings" }}
+        </DialogDescription>
+      </DialogHeader>
 
-        <Button size="icon" variant="ghost" @click="handleClose">
-          <span class="sr-only">Close</span>
-          <X />
-        </Button>
-      </header>
+      <form class="space-y-6" @submit.prevent="handleSubmit">
+        <div class="space-y-2">
+          <Label for="name">Plan Name</Label>
+          <Input id="name" v-model="formData.name" required />
+        </div>
 
-      <!-- Form -->
-      <div class="p-4">
-        <form class="space-y-6" @submit.prevent="handleSubmit">
-          <div class="space-y-2">
-            <Label for="name">Plan Name</Label>
-            <Input id="name" v-model="formData.name" required />
+        <div class="space-y-4">
+          <div>
+            <Label class="font-medium">Birth Date</Label>
+            <div class="text-muted-foreground mt-1 text-sm">
+              Used to calculate your current age and retirement timeline
+            </div>
           </div>
 
-          <div class="space-y-4">
-            <div>
-              <Label class="font-medium">Birth Date</Label>
-              <div class="text-muted-foreground mt-1 text-sm">
-                Used to calculate your current age and retirement timeline
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-2">
-                <Label for="birthMonth">Month</Label>
-                <select
-                  id="birthMonth"
-                  v-model.number="formData.birthMonth"
-                  class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                >
-                  <option value="">Select</option>
-                  <option v-for="month in MONTHS" :key="month.value" :value="month.value">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <Label for="birthMonth">Month</Label>
+              <Select
+                :model-value="String(formData.birthMonth)"
+                @update:model-value="formData.birthMonth = Number($event)"
+              >
+                <SelectTrigger id="birthMonth" class="w-full">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    v-for="month in MONTHS"
+                    :key="month.value"
+                    :value="String(month.value)"
+                  >
                     {{ month.label }}
-                  </option>
-                </select>
-              </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div class="space-y-2">
-                <Label for="birthYear">Year</Label>
-                <select
-                  id="birthYear"
-                  v-model.number="formData.birthYear"
-                  class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                >
-                  <option value="">Select</option>
-                  <option v-for="year in BIRTH_YEARS" :key="year" :value="year">
+            <div class="space-y-2">
+              <Label for="birthYear">Year</Label>
+              <Select
+                :model-value="String(formData.birthYear)"
+                @update:model-value="formData.birthYear = Number($event)"
+              >
+                <SelectTrigger id="birthYear" class="w-full">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem v-for="year in BIRTH_YEARS" :key="year" :value="String(year)">
                     {{ year }}
-                  </option>
-                </select>
-              </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
+        </div>
 
-          <div class="space-y-2">
-            <Label for="retirementAge">Retirement Age</Label>
-            <Input
-              id="retirementAge"
-              v-model.number="formData.retirementAge"
-              max="120"
-              min="10"
-              type="number"
-            />
-            <div class="text-muted-foreground text-sm">Your planned retirement age</div>
-          </div>
+        <div class="space-y-2">
+          <Label for="retirementAge">Retirement Age</Label>
+          <Input
+            id="retirementAge"
+            v-model.number="formData.retirementAge"
+            max="120"
+            min="10"
+            type="number"
+          />
+          <div class="text-muted-foreground text-sm">Your planned retirement age</div>
+        </div>
 
-          <div v-if="isCreating" class="flex items-center gap-2">
-            <Checkbox
-              id="useExample"
-              :default-value="true"
-              @update:checked="(val: boolean) => (useExampleData = val)"
-            />
-            <Label for="useExample" class="text-muted-foreground cursor-pointer text-sm">
-              Populate with demo data
-            </Label>
-          </div>
+        <div v-if="isCreating" class="flex items-center gap-2">
+          <Checkbox
+            id="useExample"
+            :default-value="true"
+            @update:checked="(val: boolean) => (useExampleData = val)"
+          />
+          <Label for="useExample" class="text-muted-foreground cursor-pointer text-sm">
+            Populate with demo data
+          </Label>
+        </div>
 
-          <div class="flex justify-end gap-2 pt-4">
-            <Button type="button" variant="outline" @click="handleClose"> Cancel </Button>
-            <Button type="submit" :disabled="isDisabled">
-              {{ submitLabel }}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
+        <DialogFooter>
+          <Button type="button" variant="outline" @click="handleClose"> Cancel </Button>
+          <Button type="submit" :disabled="isDisabled">
+            {{ submitLabel }}
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogScrollContent>
+  </Dialog>
 </template>

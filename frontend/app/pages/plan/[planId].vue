@@ -116,29 +116,22 @@ function onPlanUpdated(summary: SerializedPlanSummary) {
 
           <!-- Controls -->
           <div
-            class="z-2 mt-6 -mb-16 flex items-center justify-end gap-6 xl:m-0 xl:justify-start xl:pt-1"
+            class="text-muted-foreground z-2 mt-6 -mb-16 flex items-center justify-end gap-6 xl:m-0 xl:justify-start xl:pt-1"
           >
-            <div class="text-muted-foreground flex items-center gap-1 text-sm" title="Current age">
-              <Cake class="h-6 w-6" />
+            <div class="flex items-center gap-1 text-sm" title="Current age">
+              <Cake />
               <span>{{ currentAge }}</span>
             </div>
 
-            <div
-              class="text-muted-foreground flex items-center gap-1 text-sm"
-              title="Retirement age"
-            >
-              <PalmtreeIcon class="h-6 w-6" />
+            <div class="flex items-center gap-1 text-sm" title="Retirement age">
+              <PalmtreeIcon />
               <span>{{ retirementAge }}</span>
             </div>
 
-            <button
-              class="text-muted-foreground hover:text-foreground"
-              title="Edit plan"
-              @click="isSettingsOpen = true"
-            >
-              <Settings class="h-6 w-6" />
+            <Button variant="ghost" size="icon" title="Edit plan" @click="isSettingsOpen = true">
+              <Settings class="size-6" />
               <span class="sr-only">Edit plan</span>
-            </button>
+            </Button>
           </div>
         </header>
 

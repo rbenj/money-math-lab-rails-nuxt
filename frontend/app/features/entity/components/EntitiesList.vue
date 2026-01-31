@@ -93,7 +93,7 @@ async function handleDelete() {
         </div>
 
         <Button class="gap-1" @click="isCreateModalOpen = true">
-          <Plus class="h-4 w-4" />
+          <Plus />
           Create
         </Button>
       </div>

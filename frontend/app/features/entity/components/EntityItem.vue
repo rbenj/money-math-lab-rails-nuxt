@@ -112,12 +112,12 @@ const categoryInnerClass = computed(() => {
           </DropdownMenuTrigger>
 
           <DropdownMenuContent align="end">
-            <DropdownMenuItem @click="emit('edit')">
-              <Pencil class="mr-2 h-4 w-4" />
+            <DropdownMenuItem class="gap-2" @click="emit('edit')">
+              <Pencil />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem @click="emit('delete')">
-              <Trash2 class="mr-2 h-4 w-4" />
+            <DropdownMenuItem class="gap-2" @click="emit('delete')">
+              <Trash2 />
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

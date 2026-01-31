@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { X } from "lucide-vue-next";
 import { type EntityFormData, type ScheduleFormData, EntityType } from "../types";
 import type { Entity } from "../entity";
 import { entityToFormData, getDefaultFormData } from "../form-helpers";
@@ -140,58 +139,55 @@ const growthRateValue = computed(() => {
 </script>
 
 <template>
-  <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
-    <!-- Backdrop -->
-    <div class="bg-background/80 absolute inset-0 backdrop-blur-sm" @click="handleClose" />
+  <Dialog :open="open" @update:open="(val) => !val && handleClose()">
+    <DialogScrollContent class="max-w-2xl">
+      <DialogHeader>
+        <DialogTitle>{{ title }}</DialogTitle>
 
-    <!-- Modal -->
-    <div
-      class="bg-background relative m-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg border shadow-lg"
-    >
-      <!-- Header -->
-      <div class="bg-background sticky top-0 z-10 flex items-center justify-between border-b p-4">
-        <h2 class="text-lg font-semibold">{{ title }}</h2>
-        <Button size="icon" variant="ghost" @click="handleClose">
-          <X />
-          <span class="sr-only">Close</span>
-        </Button>
-      </div>
+        <DialogDescription class="sr-only">
+          {{ isEditing ? "Edit entity details" : "Create a new entity" }}
+        </DialogDescription>
+      </DialogHeader>
 
-      <!-- Form -->
-      <form class="space-y-4 p-4" @submit.prevent="handleSubmit">
-        <!-- Entity Type -->
+      <form class="space-y-4" @submit.prevent="handleSubmit">
+        <!-- Entity type -->
         <div v-if="!isEditing" class="space-y-2">
           <Label for="type">Type</Label>
-          <select
-            id="type"
-            :value="formData.type"
-            class="border-input bg-background h-9 w-full rounded-md border px-3 py-1 text-sm disabled:opacity-50"
-            @change="handleTypeChange(($event.target as HTMLSelectElement).value as EntityType)"
+          <Select
+            :model-value="formData.type"
+            @update:model-value="handleTypeChange($event as EntityType)"
           >
-            <option v-for="type in ENTITY_TYPES" :key="type.value" :value="type.value">
-              {{ type.label }}
-            </option>
-          </select>
+            <SelectTrigger id="type" class="w-full">
+              <SelectValue placeholder="Select type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="type in ENTITY_TYPES" :key="type.value" :value="type.value">
+                {{ type.label }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <!-- Template -->
         <div v-if="!isEditing" class="space-y-2">
           <Label for="templateKey">Template</Label>
-          <select
-            id="templateKey"
-            :value="formData.templateKey"
-            class="border-input bg-background h-9 w-full rounded-md border px-3 py-1 text-sm disabled:opacity-50"
-            required
-            @change="updateField('templateKey', ($event.target as HTMLSelectElement).value)"
+          <Select
+            :model-value="formData.templateKey"
+            @update:model-value="updateField('templateKey', String($event))"
           >
-            <option
-              v-for="template in availableTemplates"
-              :key="template.key"
-              :value="template.key"
-            >
-              {{ template.name }}
-            </option>
-          </select>
+            <SelectTrigger id="templateKey" class="w-full">
+              <SelectValue placeholder="Select template" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem
+                v-for="template in availableTemplates"
+                :key="template.key"
+                :value="template.key"
+              >
+                {{ template.name }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <!-- Name -->
@@ -209,22 +205,25 @@ const growthRateValue = computed(() => {
         <!-- Parent -->
         <div class="space-y-2">
           <Label for="parentId">Belongs to</Label>
-          <select
-            id="parentId"
-            :value="formData.parentId || ''"
-            class="border-input bg-background h-9 w-full rounded-md border px-3 py-1 text-sm disabled:opacity-50"
-            @change="
-              updateField('parentId', ($event.target as HTMLSelectElement).value || undefined)
+          <Select
+            :model-value="formData.parentId || '__none__'"
+            @update:model-value="
+              updateField('parentId', $event === '__none__' ? undefined : String($event))
             "
           >
-            <option value="">None</option>
-            <option v-for="parent in availableParents" :key="parent.id" :value="parent.id">
-              {{ parent.name }}
-            </option>
-          </select>
+            <SelectTrigger id="parentId" class="w-full">
+              <SelectValue placeholder="None" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="__none__">None</SelectItem>
+              <SelectItem v-for="parent in availableParents" :key="parent.id" :value="parent.id">
+                {{ parent.name }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <!-- Growth Rate -->
+        <!-- Growth rate -->
         <div v-if="hasGrowthRate" class="space-y-2">
           <Label for="growthRate">Growth Rate (%)</Label>
           <Input
@@ -268,17 +267,23 @@ const growthRateValue = computed(() => {
 
           <div class="space-y-2">
             <Label for="paymentSourceEntityId">Payment Source Account</Label>
-            <select
-              id="paymentSourceEntityId"
-              :value="formData.paymentSourceEntityId"
-              class="border-input bg-background h-9 w-full rounded-md border px-3 py-1 text-sm disabled:opacity-50"
-              @change="formData.paymentSourceEntityId = ($event.target as HTMLSelectElement).value"
+            <Select
+              :model-value="formData.paymentSourceEntityId"
+              @update:model-value="formData.paymentSourceEntityId = String($event)"
             >
-              <option value="">Select an account</option>
-              <option v-for="account in availableAccounts" :key="account.id" :value="account.id">
-                {{ account.name }}
-              </option>
-            </select>
+              <SelectTrigger id="paymentSourceEntityId" class="w-full">
+                <SelectValue placeholder="Select an account" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="account in availableAccounts"
+                  :key="account.id"
+                  :value="account.id"
+                >
+                  {{ account.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <ScheduleFields v-model="formData.paymentSchedule" label="Payment Schedule" />
@@ -288,17 +293,23 @@ const growthRateValue = computed(() => {
         <template v-if="formData.type === EntityType.Income">
           <div class="space-y-2">
             <Label for="targetEntityId">Target Account</Label>
-            <select
-              id="targetEntityId"
-              :value="formData.targetEntityId"
-              class="border-input bg-background h-9 w-full rounded-md border px-3 py-1 text-sm disabled:opacity-50"
-              @change="formData.targetEntityId = ($event.target as HTMLSelectElement).value"
+            <Select
+              :model-value="formData.targetEntityId"
+              @update:model-value="formData.targetEntityId = String($event)"
             >
-              <option value="">Select an account</option>
-              <option v-for="account in availableAccounts" :key="account.id" :value="account.id">
-                {{ account.name }}
-              </option>
-            </select>
+              <SelectTrigger id="targetEntityId" class="w-full">
+                <SelectValue placeholder="Select an account" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="account in availableAccounts"
+                  :key="account.id"
+                  :value="account.id"
+                >
+                  {{ account.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <ScheduleFields
@@ -312,17 +323,23 @@ const growthRateValue = computed(() => {
         <template v-if="formData.type === EntityType.Expense">
           <div class="space-y-2">
             <Label for="sourceEntityId">Source Account</Label>
-            <select
-              id="sourceEntityId"
-              :value="formData.sourceEntityId"
-              class="border-input bg-background h-9 w-full rounded-md border px-3 py-1 text-sm disabled:opacity-50"
-              @change="formData.sourceEntityId = ($event.target as HTMLSelectElement).value"
+            <Select
+              :model-value="formData.sourceEntityId"
+              @update:model-value="formData.sourceEntityId = String($event)"
             >
-              <option value="">Select an account</option>
-              <option v-for="account in availableAccounts" :key="account.id" :value="account.id">
-                {{ account.name }}
-              </option>
-            </select>
+              <SelectTrigger id="sourceEntityId" class="w-full">
+                <SelectValue placeholder="Select an account" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  v-for="account in availableAccounts"
+                  :key="account.id"
+                  :value="account.id"
+                >
+                  {{ account.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <ScheduleFields
@@ -350,8 +367,7 @@ const growthRateValue = computed(() => {
           @update:model-value="updateField('ledgerEntries', $event)"
         />
 
-        <!-- Actions -->
-        <div class="flex justify-end gap-2 border-t pt-4">
+        <DialogFooter>
           <Button type="button" variant="outline" :disabled="isSubmitting" @click="handleClose">
             Cancel
           </Button>
@@ -359,8 +375,8 @@ const growthRateValue = computed(() => {
           <Button type="submit" :disabled="isSubmitting">
             {{ isSubmitting ? "Saving..." : isEditing ? "Update" : "Create" }}
           </Button>
-        </div>
+        </DialogFooter>
       </form>
-    </div>
-  </div>
+    </DialogScrollContent>
+  </Dialog>
 </template>

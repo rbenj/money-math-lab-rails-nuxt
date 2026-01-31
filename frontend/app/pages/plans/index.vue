@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Plus, Settings as SettingsIcon, Trash2 } from "lucide-vue-next";
+import { Plus, Settings, Trash2 } from "lucide-vue-next";
 import type { SerializedPlanSummary } from "@/features/plan/types";
 import { usePlanApi } from "@/features/plan/composables/use-plan-api";
 
@@ -77,14 +77,14 @@ async function handleDeletePlan() {
         <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle class="text-lg font-medium">{{ plan.name }}</CardTitle>
 
-          <div class="flex items-center gap-1">
+          <div class="text-muted-foreground flex items-center gap-1">
             <Button
               size="icon"
               variant="ghost"
               title="Edit plan settings"
               @click.prevent="editingPlan = plan"
             >
-              <SettingsIcon />
+              <Settings />
               <span class="sr-only">Edit plan</span>
             </Button>
 

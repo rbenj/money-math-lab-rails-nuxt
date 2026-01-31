@@ -44,7 +44,7 @@ const formattedPercent = computed(() => {
 
       <CardAction>
         <Badge variant="outline" class="border-card-alt-muted-foreground gap-1 rounded-full">
-          <component :is="TrendIcon" class="h-3 w-3" />
+          <component :is="TrendIcon" />
           {{ formattedPercent }}
         </Badge>
       </CardAction>
