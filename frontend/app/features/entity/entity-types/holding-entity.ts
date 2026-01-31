@@ -42,7 +42,7 @@ export class HoldingEntity extends Entity {
 
   public toSerialized(): SerializedEntity {
     return {
-      ...this.serializeBase(EntityType.Holding),
+      ...this.getSerializedBase(EntityType.Holding),
       data: {
         symbol: this.symbol,
         growthRate: this.growthRate,

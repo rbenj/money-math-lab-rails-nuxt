@@ -220,7 +220,7 @@ function handleEntityDeleted(entityId: string) {
     <!-- Settings Modal -->
     <PlanFormModal
       :open="isSettingsOpen"
-      :plan-id="route.params.planId"
+      :plan-id="route.params.planId as string"
       title="Plan Settings"
       :initial-data="currentPlanSummary"
       submit-label="Save Changes"

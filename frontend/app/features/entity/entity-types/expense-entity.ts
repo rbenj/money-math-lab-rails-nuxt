@@ -53,7 +53,7 @@ export class ExpenseEntity extends Entity {
 
   public toSerialized(): SerializedEntity {
     return {
-      ...this.serializeBase(EntityType.Expense),
+      ...this.getSerializedBase(EntityType.Expense),
       data: {
         growthRate: this.growthRate,
         schedule: this.schedule.toSerialized(),

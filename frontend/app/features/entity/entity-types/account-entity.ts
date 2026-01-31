@@ -38,7 +38,7 @@ export class AccountEntity extends Entity {
 
   public toSerialized(): SerializedEntity {
     return {
-      ...this.serializeBase(EntityType.Account),
+      ...this.getSerializedBase(EntityType.Account),
       data: {
         growthRate: this.growthRate,
       },

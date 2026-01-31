@@ -90,12 +90,15 @@ const aggregatedData = computed(() => {
 
   for (let i = 0; i < all.length; i += groupSize) {
     const group = all.slice(i, i + groupSize);
+    const first = group[0];
+    if (!first) continue;
+
     const avgAssets = group.reduce((sum, d) => sum + d.assets, 0) / group.length;
     const avgDebt = group.reduce((sum, d) => sum + d.debt, 0) / group.length;
     const avgNetWorth = group.reduce((sum, d) => sum + d.netWorth, 0) / group.length;
 
     aggregated.push({
-      age: group[0].age,
+      age: first.age,
       assets: avgAssets,
       debt: avgDebt,
       netWorth: avgNetWorth,
@@ -212,11 +215,11 @@ const chartOptions = computed(() => ({
     tooltip: {
       callbacks: {
         title: () => "",
-        label: (context: { raw: number; dataset: { label: string }; label: string }) => {
-          const value = Math.abs(context.raw);
+        label: (context: { raw: unknown; dataset: { label?: string } }) => {
+          const value = Math.abs(context.raw as number);
           const name = context.dataset.label
-            .replace(/([A-Z])/g, " $1")
-            .replace(/^./, (str) => str.toUpperCase());
+            ?.replace(/([A-Z])/g, " $1")
+            .replace(/^./, (str: string) => str.toUpperCase());
           return `${name}: ${formatDisplayMoney(value)}`;
         },
       },
@@ -225,7 +228,7 @@ const chartOptions = computed(() => ({
       annotations: {
         todayLine: {
           type: "line" as const,
-          drawTime: "beforeDatasetsDraw",
+          drawTime: "beforeDatasetsDraw" as const,
           xMin: String(todayAgeInData.value),
           xMax: String(todayAgeInData.value),
           borderColor: chartColors.value.line,
@@ -234,7 +237,7 @@ const chartOptions = computed(() => ({
           label: {
             display: true,
             content: "Today",
-            position: "end",
+            position: "end" as const,
             yAdjust: 0,
             backgroundColor: chartColors.value.background,
             color: chartColors.value.line,
@@ -244,7 +247,7 @@ const chartOptions = computed(() => ({
         },
         retirementLine: {
           type: "line" as const,
-          drawTime: "beforeDatasetsDraw",
+          drawTime: "beforeDatasetsDraw" as const,
           xMin: String(retirementAgeInData.value),
           xMax: String(retirementAgeInData.value),
           borderColor: chartColors.value.line,
@@ -253,7 +256,7 @@ const chartOptions = computed(() => ({
           label: {
             display: true,
             content: "Retirement",
-            position: "end",
+            position: "end" as const,
             yAdjust: 0,
             backgroundColor: chartColors.value.background,
             color: chartColors.value.line,

@@ -17,12 +17,12 @@ export function isEntityActive(
   }
 
   // Check if any ancestor is muted
-  let parent = entity.parentId ? entitiesMap.get(entity.parentId) : null;
+  let parent: Entity | undefined = entity.parentId ? entitiesMap.get(entity.parentId) : undefined;
   while (parent) {
     if (mutedIds.has(parent.id)) {
       return false;
     }
-    parent = parent.parentId ? entitiesMap.get(parent.parentId) : null;
+    parent = parent.parentId ? entitiesMap.get(parent.parentId) : undefined;
   }
 
   // Limit to only soloed entities if there are any
@@ -32,12 +32,12 @@ export function isEntityActive(
     }
 
     // Check if any ancestor is soloed
-    parent = entity.parentId ? entitiesMap.get(entity.parentId) : null;
+    parent = entity.parentId ? entitiesMap.get(entity.parentId) : undefined;
     while (parent) {
       if (soloedIds.has(parent.id)) {
         return true;
       }
-      parent = parent.parentId ? entitiesMap.get(parent.parentId) : null;
+      parent = parent.parentId ? entitiesMap.get(parent.parentId) : undefined;
     }
 
     return false;

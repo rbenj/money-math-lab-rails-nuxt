@@ -58,7 +58,7 @@ export class DebtEntity extends Entity {
 
   public toSerialized(): SerializedEntity {
     return {
-      ...this.serializeBase(EntityType.Debt),
+      ...this.getSerializedBase(EntityType.Debt),
       data: {
         interestRate: this.interestRate,
         paymentAmount: this.paymentAmount,

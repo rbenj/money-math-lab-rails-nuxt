@@ -38,7 +38,7 @@ export class PossessionEntity extends Entity {
 
   public toSerialized(): SerializedEntity {
     return {
-      ...this.serializeBase(EntityType.Possession),
+      ...this.getSerializedBase(EntityType.Possession),
       data: {
         growthRate: this.growthRate,
       },

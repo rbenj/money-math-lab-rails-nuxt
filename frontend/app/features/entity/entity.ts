@@ -10,6 +10,16 @@ export interface EntityInput {
   ledger?: Ledger;
 }
 
+function serializeLedger(ledger: Ledger): SerializedLedgerEntry[] {
+  return ledger.map((e) => ({
+    id: e.id,
+    day: e.day,
+    amount: e.amount,
+    shareQuantity: e.shareQuantity,
+    sharePrice: e.sharePrice,
+  }));
+}
+
 /**
  * Entities represent anything that the user is tracking and wants to simulate.
  */
@@ -34,30 +44,17 @@ export abstract class Entity {
   public abstract toSerialized(): SerializedEntity;
 
   /**
-   * Get base serialized fields shared by all entity types.
+   * Get base serialized fields for subclasses to use in their serialization.
    */
-  protected serializeBase(type: EntityType): Omit<SerializedEntity, "data"> {
+  public getSerializedBase(type: EntityType): Omit<SerializedEntity, "data"> {
     return {
       id: this.id,
       name: this.name,
       type,
       templateKey: this.templateKey,
       parentId: this.parentId ?? null,
-      ledgerEntries: this.serializeLedger(),
+      ledgerEntries: serializeLedger(this.ledger),
     };
-  }
-
-  /**
-   * Convert ledger to serialized format.
-   */
-  protected serializeLedger(): SerializedLedgerEntry[] {
-    return this.ledger.map((e) => ({
-      id: e.id,
-      day: e.day,
-      amount: e.amount,
-      shareQuantity: e.shareQuantity,
-      sharePrice: e.sharePrice,
-    }));
   }
 
   /**

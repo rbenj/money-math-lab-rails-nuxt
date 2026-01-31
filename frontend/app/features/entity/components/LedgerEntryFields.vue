@@ -22,8 +22,11 @@ function handleEntryChange(
   value: string | number | undefined,
 ) {
   const newEntries = [...props.modelValue];
-  newEntries[index] = { ...newEntries[index], [field]: value };
-  emit("update:modelValue", newEntries);
+  const existing = newEntries[index];
+  if (existing) {
+    newEntries[index] = { ...existing, [field]: value };
+    emit("update:modelValue", newEntries);
+  }
 }
 
 function handleAddEntry() {
@@ -43,6 +46,8 @@ function handleRemoveEntry(index: number) {
   if (props.modelValue.length <= 1) return;
 
   const entry = props.modelValue[index];
+  if (!entry) return;
+
   if (entry.id) {
     // Mark for deletion instead of removing
     const newEntries = [...props.modelValue];
