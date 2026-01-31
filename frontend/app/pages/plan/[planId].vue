@@ -3,13 +3,9 @@ import { ArrowLeft, Cake, PalmtreeIcon, Settings } from "lucide-vue-next";
 import { calculateAgeFromDate } from "@/lib/date-utils";
 import { isEntityActive } from "@/features/entity/utils";
 import type { Entity } from "@/features/entity/entity";
-import EntitiesList from "@/features/entity/components/EntitiesList.vue";
 import type { SerializedPlanSummary } from "@/features/plan/types";
 import { Plan } from "@/features/plan/plan";
 import { usePlanApi } from "@/features/plan/composables/use-plan-api";
-import PlanFormModal from "@/features/plan/components/PlanFormModal.vue";
-import MetricsGrid from "@/features/plan/components/MetricsGrid.vue";
-import SimulationChart from "@/features/plan/components/SimulationChart.vue";
 
 definePageMeta({
   middleware: "auth",

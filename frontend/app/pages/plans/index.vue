@@ -2,7 +2,6 @@
 import { Plus, Settings as SettingsIcon, Trash2 } from "lucide-vue-next";
 import type { SerializedPlanSummary } from "@/features/plan/types";
 import { usePlanApi } from "@/features/plan/composables/use-plan-api";
-import PlanFormModal from "@/features/plan/components/PlanFormModal.vue";
 
 definePageMeta({
   middleware: "auth",

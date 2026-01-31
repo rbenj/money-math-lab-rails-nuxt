@@ -5,8 +5,6 @@ import type { Entity } from "../entity";
 import { entityToFormData, getDefaultFormData } from "../form-helpers";
 import { useEntityForm } from "../composables/use-entity-form";
 import { getTemplatesForEntityType } from "../entity-templates";
-import ScheduleFields from "./ScheduleFields.vue";
-import LedgerEntryFields from "./LedgerEntryFields.vue";
 
 const ENTITY_TYPES = Object.entries(EntityType).map(([label, value]) => ({
   value: value as EntityType,

@@ -17,6 +17,16 @@ export default defineNuxtConfig({
     },
   },
 
+  components: [
+    { path: "~/components" },
+    {
+      path: "~/features",
+      pathPrefix: false,
+      pattern: "**/components/**/*.vue",
+      ignore: ["**/node_modules/**"],
+    },
+  ],
+
   modules: ["@nuxtjs/color-mode", "shadcn-nuxt"],
 
   shadcn: {
