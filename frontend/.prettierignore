@@ -2,7 +2,6 @@
 .output/
 *.min.css
 *.min.js
-app/components/ui/
 dist/
 node_modules/
 package-lock.json
