@@ -1,8 +1,8 @@
-import { getLastDaysOfMonthsInRange } from '@/lib/date-utils';
-import { Transaction } from '@/features/simulation/transaction';
-import type { Snapshot } from '@/features/simulation/snapshot';
-import { EntityType, type SerializedEntity } from '../types';
-import { Entity, type EntityInput } from '../entity';
+import { getLastDaysOfMonthsInRange } from "@/lib/date-utils";
+import { Transaction } from "@/features/simulation/transaction";
+import type { Snapshot } from "@/features/simulation/snapshot";
+import { EntityType, type SerializedEntity } from "../types";
+import { Entity, type EntityInput } from "../entity";
 
 interface HoldingEntityInput extends EntityInput {
   symbol: string;
@@ -22,14 +22,14 @@ export class HoldingEntity extends Entity {
       name: data.name,
       templateKey: data.templateKey,
       parentId: data.parentId ?? undefined,
-      ledger: data.ledgerEntries.map(e => ({
+      ledger: data.ledgerEntries.map((e) => ({
         id: e.id,
         day: e.day,
         amount: e.amount ?? undefined,
         shareQuantity: e.shareQuantity ?? undefined,
         sharePrice: e.sharePrice ?? undefined,
       })),
-      symbol: (data.data.symbol as string) ?? '',
+      symbol: (data.data.symbol as string) ?? "",
       growthRate: (data.data.growthRate as number) ?? 0,
     });
   }
@@ -75,7 +75,7 @@ export class HoldingEntity extends Entity {
 
   public simulateDay(day: number, snapshots: Snapshot[]): Transaction[] {
     // Return explicit ledger entry as a correction
-    const ledgerEntry = this.ledger.find(e => e.day === day);
+    const ledgerEntry = this.ledger.find((e) => e.day === day);
     if (ledgerEntry) {
       return [
         new Transaction({
@@ -95,11 +95,13 @@ export class HoldingEntity extends Entity {
       return [];
     }
 
-    return [new Transaction({
-      day,
-      targetEntityId: this.id,
-      sharePrice: last.sharePrice + last.sharePrice * (this.growthRate / 12),
-      isCorrection: true,
-    })];
+    return [
+      new Transaction({
+        day,
+        targetEntityId: this.id,
+        sharePrice: last.sharePrice + last.sharePrice * (this.growthRate / 12),
+        isCorrection: true,
+      }),
+    ];
   }
 }

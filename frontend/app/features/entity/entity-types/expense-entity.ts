@@ -1,8 +1,8 @@
-import { dateToEpochDay, epochDayToDate } from '@/lib/date-utils';
-import { Schedule, ScheduleType, type SerializedSchedule } from '@/lib/schedule';
-import { Transaction } from '@/features/simulation/transaction';
-import { EntityType, type SerializedEntity } from '../types';
-import { Entity, type EntityInput } from '../entity';
+import { dateToEpochDay, epochDayToDate } from "@/lib/date-utils";
+import { Schedule, ScheduleType, type SerializedSchedule } from "@/lib/schedule";
+import { Transaction } from "@/features/simulation/transaction";
+import { EntityType, type SerializedEntity } from "../types";
+import { Entity, type EntityInput } from "../entity";
 
 interface ExpenseEntityInput extends EntityInput {
   growthRate: number;
@@ -25,7 +25,7 @@ export class ExpenseEntity extends Entity {
       name: data.name,
       templateKey: data.templateKey,
       parentId: data.parentId ?? undefined,
-      ledger: data.ledgerEntries.map(e => ({
+      ledger: data.ledgerEntries.map((e) => ({
         id: e.id,
         day: e.day,
         amount: e.amount ?? undefined,
@@ -35,8 +35,12 @@ export class ExpenseEntity extends Entity {
       growthRate: (data.data.growthRate as number) ?? 0,
       schedule: scheduleData
         ? Schedule.fromSerialized(scheduleData)
-        : Schedule.fromSerialized({ type: ScheduleType.Monthly, daysOfMonth: [1], startDate: new Date().toISOString() }),
-      sourceEntityId: (data.data.sourceEntityId as string) ?? '',
+        : Schedule.fromSerialized({
+            type: ScheduleType.Monthly,
+            daysOfMonth: [1],
+            startDate: new Date().toISOString(),
+          }),
+      sourceEntityId: (data.data.sourceEntityId as string) ?? "",
     });
   }
 
@@ -70,7 +74,7 @@ export class ExpenseEntity extends Entity {
     const startDate = epochDayToDate(effectiveStartDay);
     const endDate = epochDayToDate(endDay);
     const scheduleDates = this.schedule.getDatesInRange(startDate, endDate);
-    const scheduleDays = scheduleDates.map(date => dateToEpochDay(date));
+    const scheduleDays = scheduleDates.map((date) => dateToEpochDay(date));
     days.push(...scheduleDays);
 
     // Deduplicate and sort
@@ -79,9 +83,7 @@ export class ExpenseEntity extends Entity {
 
   public simulateDay(day: number): Transaction[] {
     // Find the most recent ledger entry on or before this day
-    const ledgerEntry = [...this.ledger]
-      .reverse()
-      .find(e => e.day <= day);
+    const ledgerEntry = [...this.ledger].reverse().find((e) => e.day <= day);
 
     if (!ledgerEntry) {
       return [];

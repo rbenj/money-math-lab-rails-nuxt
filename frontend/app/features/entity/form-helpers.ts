@@ -1,22 +1,22 @@
-import type { Entity } from './entity';
-import { AccountEntity } from './entity-types/account-entity';
-import { DebtEntity } from './entity-types/debt-entity';
-import { ExpenseEntity } from './entity-types/expense-entity';
-import { HoldingEntity } from './entity-types/holding-entity';
-import { IncomeEntity } from './entity-types/income-entity';
-import { PossessionEntity } from './entity-types/possession-entity';
-import { getTodayDateString, epochDayToDateString, formatDateString } from '@/lib/date-utils';
+import type { Entity } from "./entity";
+import { AccountEntity } from "./entity-types/account-entity";
+import { DebtEntity } from "./entity-types/debt-entity";
+import { ExpenseEntity } from "./entity-types/expense-entity";
+import { HoldingEntity } from "./entity-types/holding-entity";
+import { IncomeEntity } from "./entity-types/income-entity";
+import { PossessionEntity } from "./entity-types/possession-entity";
+import { getTodayDateString, epochDayToDateString, formatDateString } from "@/lib/date-utils";
 import {
   type EntityFormData,
   type ScheduleFormData,
   type LedgerEntryFormData,
   EntityType,
-} from './types';
+} from "./types";
 
 /**
  * Convert Schedule class to ScheduleFormData.
  */
-function scheduleToFormData(schedule: DebtEntity['paymentSchedule']): ScheduleFormData {
+function scheduleToFormData(schedule: DebtEntity["paymentSchedule"]): ScheduleFormData {
   return {
     type: schedule.type,
     daysOfMonth: schedule.daysOfMonth,
@@ -35,17 +35,19 @@ export function getDefaultFormData(type: EntityType): EntityFormData {
 
   const baseData = {
     id: undefined,
-    name: '',
-    templateKey: '',
+    name: "",
+    templateKey: "",
     parentId: undefined,
-    ledgerEntries: [{
-      day: todayString,
-      amount: 0,
-    }],
+    ledgerEntries: [
+      {
+        day: todayString,
+        amount: 0,
+      },
+    ],
   };
 
   const defaultSchedule: ScheduleFormData = {
-    type: 'monthly',
+    type: "monthly",
     daysOfMonth: [1],
     startDate: todayString,
   };
@@ -65,7 +67,7 @@ export function getDefaultFormData(type: EntityType): EntityFormData {
         interestRate: 0,
         paymentAmount: 0,
         paymentSchedule: defaultSchedule,
-        paymentSourceEntityId: '',
+        paymentSourceEntityId: "",
       };
 
     case EntityType.Expense:
@@ -74,20 +76,22 @@ export function getDefaultFormData(type: EntityType): EntityFormData {
         type: EntityType.Expense,
         growthRate: 0,
         schedule: defaultSchedule,
-        sourceEntityId: '',
+        sourceEntityId: "",
       };
 
     case EntityType.Holding:
       return {
         ...baseData,
         type: EntityType.Holding,
-        symbol: '',
+        symbol: "",
         growthRate: 0,
-        ledgerEntries: [{
-          day: todayString,
-          shareQuantity: 0,
-          sharePrice: 0,
-        }],
+        ledgerEntries: [
+          {
+            day: todayString,
+            shareQuantity: 0,
+            sharePrice: 0,
+          },
+        ],
       };
 
     case EntityType.Income:
@@ -96,7 +100,7 @@ export function getDefaultFormData(type: EntityType): EntityFormData {
         type: EntityType.Income,
         growthRate: 0,
         schedule: defaultSchedule,
-        targetEntityId: '',
+        targetEntityId: "",
       };
 
     case EntityType.Possession:
@@ -112,7 +116,7 @@ export function getDefaultFormData(type: EntityType): EntityFormData {
  * Convert an Entity instance to form data.
  */
 export function entityToFormData(entity: Entity): EntityFormData {
-  const ledgerEntries: LedgerEntryFormData[] = entity.ledger.map(entry => ({
+  const ledgerEntries: LedgerEntryFormData[] = entity.ledger.map((entry) => ({
     id: entry.id,
     day: epochDayToDateString(entry.day),
     amount: entry.amount,

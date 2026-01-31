@@ -1,10 +1,10 @@
 export enum ScheduleType {
-  Once = 'once',
-  Daily = 'daily',
-  Weekly = 'weekly',
-  Monthly = 'monthly',
-  Yearly = 'yearly',
-  Custom = 'custom',
+  Once = "once",
+  Daily = "daily",
+  Weekly = "weekly",
+  Monthly = "monthly",
+  Yearly = "yearly",
+  Custom = "custom",
 }
 
 interface ScheduleInput {
@@ -37,7 +37,7 @@ export class Schedule {
    * Create a Schedule from serialized data.
    */
   public static fromSerialized(data: SerializedSchedule): Schedule {
-    const typeStr = (data.type?.toLowerCase() ?? 'monthly') as ScheduleType;
+    const typeStr = (data.type?.toLowerCase() ?? "monthly") as ScheduleType;
     return new Schedule({
       type: Object.values(ScheduleType).includes(typeStr) ? typeStr : ScheduleType.Monthly,
       daysOfMonth: data.daysOfMonth,
@@ -53,35 +53,31 @@ export class Schedule {
    */
   public constructor(input: ScheduleInput) {
     if (input.type === ScheduleType.Monthly && !input.daysOfMonth) {
-      throw new Error('Days of month are required for monthly schedule');
+      throw new Error("Days of month are required for monthly schedule");
     }
 
     if (input.daysOfMonth) {
       input.daysOfMonth = Array.from(
         new Set(
-          input.daysOfMonth
-            .map(day => Math.floor(day))
-            .filter(day => day >= 1 && day <= 31), // 1-indexed days
+          input.daysOfMonth.map((day) => Math.floor(day)).filter((day) => day >= 1 && day <= 31), // 1-indexed days
         ),
       ).sort((a, b) => a - b);
     }
 
     if (input.type === ScheduleType.Weekly && !input.daysOfWeek) {
-      throw new Error('Days of week are required for weekly schedule');
+      throw new Error("Days of week are required for weekly schedule");
     }
 
     if (input.daysOfWeek) {
       input.daysOfWeek = Array.from(
         new Set(
-          input.daysOfWeek
-            .map(day => Math.floor(day))
-            .filter(day => day >= 0 && day <= 6),
+          input.daysOfWeek.map((day) => Math.floor(day)).filter((day) => day >= 0 && day <= 6),
         ),
       ).sort((a, b) => a - b);
     }
 
     if (input.type === ScheduleType.Custom && !input.interval) {
-      throw new Error('Interval is required for custom schedule');
+      throw new Error("Interval is required for custom schedule");
     }
 
     if (input.interval) {
@@ -89,7 +85,7 @@ export class Schedule {
     }
 
     if (input.endDate && input.startDate > input.endDate) {
-      throw new Error('Start date must be before end date');
+      throw new Error("Start date must be before end date");
     }
 
     this.type = input.type;

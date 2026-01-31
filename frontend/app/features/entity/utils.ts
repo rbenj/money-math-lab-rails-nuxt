@@ -1,6 +1,6 @@
-import type { Entity } from './entity';
-import { EntityCategory } from './entity-template';
-import { getEntityTemplate, ENTITY_CATEGORY_SORT_ORDER } from './entity-templates';
+import type { Entity } from "./entity";
+import { EntityCategory } from "./entity-template";
+import { getEntityTemplate, ENTITY_CATEGORY_SORT_ORDER } from "./entity-templates";
 
 /**
  * Determine if an entity is active based on mute and solo states.
@@ -62,7 +62,7 @@ export function sortEntities(entities: Entity[]): Entity[] {
   };
 
   // Separate parents and children
-  const parents = entities.filter(e => !e.parentId);
+  const parents = entities.filter((e) => !e.parentId);
   const childrenByParent = new Map<string, Entity[]>();
 
   for (const entity of entities) {
@@ -90,7 +90,7 @@ export function sortEntities(entities: Entity[]): Entity[] {
 
   // Add any orphaned children (should not happen)
   for (const entity of entities) {
-    if (entity.parentId && !parents.find(p => p.id === entity.parentId)) {
+    if (entity.parentId && !parents.find((p) => p.id === entity.parentId)) {
       if (!result.includes(entity)) {
         result.push(entity);
       }

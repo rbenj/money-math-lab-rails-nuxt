@@ -1,8 +1,8 @@
-import { dateToEpochDay, epochDayToDate, createEpochDay } from '@/lib/date-utils';
-import type { Entity } from '@/features/entity/entity';
-import { FallbackEntity } from '@/features/entity/entity-types/fallback-entity';
-import { Snapshot } from './snapshot';
-import type { Transaction } from './transaction';
+import { dateToEpochDay, epochDayToDate, createEpochDay } from "@/lib/date-utils";
+import type { Entity } from "@/features/entity/entity";
+import { FallbackEntity } from "@/features/entity/entity-types/fallback-entity";
+import { Snapshot } from "./snapshot";
+import type { Transaction } from "./transaction";
 
 export interface DataPoint {
   assets: number;
@@ -40,9 +40,9 @@ export class Simulation {
     }
 
     // Find fallback entity in entities list
-    const fallbackEntity = entities.find(entity => entity instanceof FallbackEntity);
+    const fallbackEntity = entities.find((entity) => entity instanceof FallbackEntity);
     if (!fallbackEntity) {
-      throw new Error('Fallback entity is missing');
+      throw new Error("Fallback entity is missing");
     }
     this.fallbackEntity = fallbackEntity;
 
@@ -192,7 +192,7 @@ export class Simulation {
     const lastSnapshot = snapshots[snapshots.length - 1];
 
     if (lastSnapshot && transaction.day < lastSnapshot.day) {
-      throw new Error('Transaction applied out of order');
+      throw new Error("Transaction applied out of order");
     }
 
     // Get last snapshot values or start fresh

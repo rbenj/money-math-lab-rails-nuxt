@@ -1,9 +1,9 @@
-import { dateToEpochDay, epochDayToDate, getLastDaysOfMonthsInRange } from '@/lib/date-utils';
-import { Schedule, ScheduleType, type SerializedSchedule } from '@/lib/schedule';
-import { Transaction } from '@/features/simulation/transaction';
-import type { Snapshot } from '@/features/simulation/snapshot';
-import { EntityType, type SerializedEntity } from '../types';
-import { Entity, type EntityInput } from '../entity';
+import { dateToEpochDay, epochDayToDate, getLastDaysOfMonthsInRange } from "@/lib/date-utils";
+import { Schedule, ScheduleType, type SerializedSchedule } from "@/lib/schedule";
+import { Transaction } from "@/features/simulation/transaction";
+import type { Snapshot } from "@/features/simulation/snapshot";
+import { EntityType, type SerializedEntity } from "../types";
+import { Entity, type EntityInput } from "../entity";
 
 interface DebtEntityInput extends EntityInput {
   interestRate: number;
@@ -28,7 +28,7 @@ export class DebtEntity extends Entity {
       name: data.name,
       templateKey: data.templateKey,
       parentId: data.parentId ?? undefined,
-      ledger: data.ledgerEntries.map(e => ({
+      ledger: data.ledgerEntries.map((e) => ({
         id: e.id,
         day: e.day,
         amount: e.amount ?? undefined,
@@ -39,8 +39,12 @@ export class DebtEntity extends Entity {
       paymentAmount: (data.data.paymentAmount as number) ?? 0,
       paymentSchedule: paymentScheduleData
         ? Schedule.fromSerialized(paymentScheduleData)
-        : Schedule.fromSerialized({ type: ScheduleType.Monthly, daysOfMonth: [1], startDate: new Date().toISOString() }),
-      paymentSourceEntityId: (data.data.paymentSourceEntityId as string) ?? '',
+        : Schedule.fromSerialized({
+            type: ScheduleType.Monthly,
+            daysOfMonth: [1],
+            startDate: new Date().toISOString(),
+          }),
+      paymentSourceEntityId: (data.data.paymentSourceEntityId as string) ?? "",
     });
   }
 
@@ -88,7 +92,7 @@ export class DebtEntity extends Entity {
     const endDate = epochDayToDate(endDay);
     const scheduleDays = this.paymentSchedule
       .getDatesInRange(startDate, endDate)
-      .map(date => dateToEpochDay(date));
+      .map((date) => dateToEpochDay(date));
     days.push(...scheduleDays);
 
     // Deduplicate and sort
@@ -99,7 +103,7 @@ export class DebtEntity extends Entity {
     const transactions: Transaction[] = [];
 
     // Check for ledger adjustment to principal
-    const ledgerEntry = this.ledger.find(e => e.day === day);
+    const ledgerEntry = this.ledger.find((e) => e.day === day);
     if (ledgerEntry) {
       transactions.push(
         new Transaction({
@@ -146,11 +150,9 @@ export class DebtEntity extends Entity {
     }
 
     // Apply monthly interest after scheduled payment (on last day of month)
-    const isLastDayOfMonth = dayDate.getUTCDate() === new Date(Date.UTC(
-      dayDate.getUTCFullYear(),
-      dayDate.getUTCMonth() + 1,
-      0,
-    )).getUTCDate();
+    const isLastDayOfMonth =
+      dayDate.getUTCDate() ===
+      new Date(Date.UTC(dayDate.getUTCFullYear(), dayDate.getUTCMonth() + 1, 0)).getUTCDate();
 
     if (isLastDayOfMonth && this.interestRate !== 0 && currentBalance < 0) {
       const monthlyRate = this.interestRate / 12;

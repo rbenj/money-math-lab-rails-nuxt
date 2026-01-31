@@ -1,4 +1,4 @@
-import type { SerializedPlan, SerializedPlanSummary } from '../types';
+import type { SerializedPlan, SerializedPlanSummary } from "../types";
 
 interface PlanData {
   name: string;
@@ -13,7 +13,7 @@ export function usePlanApi() {
    * Fetch all plan summaries (no entities).
    */
   async function fetchPlanSummaries(): Promise<SerializedPlanSummary[]> {
-    return await get<SerializedPlanSummary[]>('/plans');
+    return await get<SerializedPlanSummary[]>("/plans");
   }
 
   /**
@@ -27,7 +27,7 @@ export function usePlanApi() {
    * Create a new plan, and get the summary for it.
    */
   async function createPlan(data: PlanData, useExample: boolean): Promise<SerializedPlanSummary> {
-    return await post<SerializedPlanSummary>('/plans', {
+    return await post<SerializedPlanSummary>("/plans", {
       plan: data,
       use_example: useExample,
     });

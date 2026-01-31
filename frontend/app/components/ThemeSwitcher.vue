@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { Laptop, Moon, Sun } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
+import { Laptop, Moon, Sun } from "lucide-vue-next";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 const colorMode = useColorMode();
 </script>
@@ -15,11 +15,7 @@ const colorMode = useColorMode();
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button
-        class="text-muted-foreground hover:bg-transparent"
-        size="icon-sm"
-        variant="ghost"
-      >
+      <Button class="text-muted-foreground hover:bg-transparent" size="icon-sm" variant="ghost">
         <ClientOnly>
           <Sun v-if="colorMode.value === 'light'" />
           <Moon v-else-if="colorMode.value === 'dark'" />

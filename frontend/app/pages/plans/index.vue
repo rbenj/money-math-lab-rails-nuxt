@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Plus, Settings as SettingsIcon, Trash2 } from 'lucide-vue-next';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Settings as SettingsIcon, Trash2 } from "lucide-vue-next";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,19 +11,19 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import type { SerializedPlanSummary } from '@/features/plan/types';
-import { usePlanApi } from '@/features/plan/composables/use-plan-api';
-import PlanFormModal from '@/features/plan/components/PlanFormModal.vue';
+} from "@/components/ui/alert-dialog";
+import type { SerializedPlanSummary } from "@/features/plan/types";
+import { usePlanApi } from "@/features/plan/composables/use-plan-api";
+import PlanFormModal from "@/features/plan/components/PlanFormModal.vue";
 
 definePageMeta({
-  middleware: 'auth',
+  middleware: "auth",
 });
 
 const router = useRouter();
 const planApi = usePlanApi();
 
-const { data: plans, refresh } = await useAsyncData('plans', () => planApi.fetchPlanSummaries());
+const { data: plans, refresh } = await useAsyncData("plans", () => planApi.fetchPlanSummaries());
 
 const isCreateModalOpen = ref(false);
 
@@ -51,7 +51,7 @@ async function handleDeletePlan() {
     deletingPlan.value = null;
     await refresh();
   } catch (error) {
-    console.error('Failed to delete plan:', error);
+    console.error("Failed to delete plan:", error);
   } finally {
     isDeleteLoading.value = false;
   }
@@ -59,13 +59,13 @@ async function handleDeletePlan() {
 </script>
 
 <template>
-  <div class="container mx-auto p-6 space-y-6">
+  <div class="container mx-auto space-y-6 p-6">
     <!-- Header and controls -->
     <header class="flex items-center justify-between">
       <h1 class="text-3xl font-bold tracking-tight">Your Plans</h1>
 
       <Button @click="isCreateModalOpen = true">
-        <Plus class="h-4 w-4 mr-1" />
+        <Plus class="mr-1 h-4 w-4" />
         Create Plan
       </Button>
     </header>
@@ -73,9 +73,9 @@ async function handleDeletePlan() {
     <!-- No plans -->
     <Card v-if="!plans || plans.length === 0">
       <CardContent class="py-12">
-        <div class="text-center space-y-4">
+        <div class="space-y-4 text-center">
           <div class="text-muted-foreground">You don't have any plans yet.</div>
-          <div class="text-sm text-muted-foreground">Create your first plan to get started.</div>
+          <div class="text-muted-foreground text-sm">Create your first plan to get started.</div>
         </div>
       </CardContent>
     </Card>
@@ -164,7 +164,7 @@ async function handleDeletePlan() {
             class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             @click.prevent="handleDeletePlan"
           >
-            {{ isDeleteLoading ? 'Deleting...' : 'Delete' }}
+            {{ isDeleteLoading ? "Deleting..." : "Delete" }}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

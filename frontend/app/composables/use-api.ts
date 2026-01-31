@@ -19,33 +19,33 @@ export function useApi() {
 
   async function get<T>(path: string): Promise<T> {
     return await $fetch<T>(`${baseUrl}${path}`, {
-      credentials: 'include',
+      credentials: "include",
       headers: getHeaders(),
     });
   }
 
   async function post<T>(path: string, body?: Record<string, unknown>): Promise<T> {
     return await $fetch<T>(`${baseUrl}${path}`, {
-      method: 'POST',
+      method: "POST",
       body,
-      credentials: 'include',
+      credentials: "include",
       headers: getHeaders(),
     });
   }
 
   async function put<T>(path: string, body: Record<string, unknown>): Promise<T> {
     return await $fetch<T>(`${baseUrl}${path}`, {
-      method: 'PUT',
+      method: "PUT",
       body,
-      credentials: 'include',
+      credentials: "include",
       headers: getHeaders(),
     });
   }
 
   async function del(path: string): Promise<void> {
     await $fetch(`${baseUrl}${path}`, {
-      method: 'DELETE',
-      credentials: 'include',
+      method: "DELETE",
+      credentials: "include",
       headers: getHeaders(),
     });
   }

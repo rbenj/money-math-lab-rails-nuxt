@@ -1,6 +1,6 @@
-import type { EntityType, Ledger, SerializedEntity, SerializedLedgerEntry } from './types';
-import type { Snapshot } from '@/features/simulation/snapshot';
-import type { Transaction } from '@/features/simulation/transaction';
+import type { EntityType, Ledger, SerializedEntity, SerializedLedgerEntry } from "./types";
+import type { Snapshot } from "@/features/simulation/snapshot";
+import type { Transaction } from "@/features/simulation/transaction";
 
 export interface EntityInput {
   id: string;
@@ -36,7 +36,7 @@ export abstract class Entity {
   /**
    * Get base serialized fields shared by all entity types.
    */
-  protected serializeBase(type: EntityType): Omit<SerializedEntity, 'data'> {
+  protected serializeBase(type: EntityType): Omit<SerializedEntity, "data"> {
     return {
       id: this.id,
       name: this.name,
@@ -51,7 +51,7 @@ export abstract class Entity {
    * Convert ledger to serialized format.
    */
   protected serializeLedger(): SerializedLedgerEntry[] {
-    return this.ledger.map(e => ({
+    return this.ledger.map((e) => ({
       id: e.id,
       day: e.day,
       amount: e.amount,

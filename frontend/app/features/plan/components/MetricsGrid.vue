@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Plan } from '@/features/plan/plan';
-import MetricCard from './MetricCard.vue';
+import type { Plan } from "@/features/plan/plan";
+import MetricCard from "./MetricCard.vue";
 
 const props = defineProps<{
   plan: Plan;

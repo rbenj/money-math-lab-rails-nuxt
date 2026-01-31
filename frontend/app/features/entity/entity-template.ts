@@ -1,11 +1,11 @@
-import type { LucideIcon } from 'lucide-vue-next';
-import type { EntityType } from './types';
+import type { LucideIcon } from "lucide-vue-next";
+import type { EntityType } from "./types";
 
 export enum EntityCategory {
-  Debt = 'debt',
-  Expense = 'expense',
-  Income = 'income',
-  Investment = 'investment',
+  Debt = "debt",
+  Expense = "expense",
+  Income = "income",
+  Investment = "investment",
 }
 
 export interface EntityTemplate {

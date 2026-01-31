@@ -1,4 +1,4 @@
-import { DEFAULT_BIRTH_MONTH, DEFAULT_BIRTH_YEAR } from '@/constants';
+import { DEFAULT_BIRTH_MONTH, DEFAULT_BIRTH_YEAR } from "@/constants";
 
 /**
  * Creates a normalized GMT/UTC date representing a single day at the start or end of that day.
@@ -26,11 +26,7 @@ export function createEpochDay(year: number, month: number, day: number): number
  * Convert a UTC date to the number of days since Unix epoch.
  */
 export function dateToEpochDay(date: Date): number {
-  const utcMidnight = Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-  );
+  const utcMidnight = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
 
   return Math.floor(utcMidnight / 86400000);
 }
@@ -40,7 +36,7 @@ export function dateToEpochDay(date: Date): number {
  */
 export function epochDayToDate(day: number): Date {
   const epochStart = Date.UTC(1970, 0, 1);
-  return new Date(epochStart + (day * 86400000));
+  return new Date(epochStart + day * 86400000);
 }
 
 /**
@@ -71,8 +67,8 @@ export function getTodayDateString(): string {
  */
 export function formatDateString(date: Date): string {
   const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(date.getUTCDate()).padStart(2, '0');
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -86,8 +82,8 @@ export function getLastDaysOfMonthsInRange(startDay: number, endDay: number): nu
   const endDate = epochDayToDate(endDay);
 
   for (let year = startDate.getUTCFullYear(); year <= endDate.getUTCFullYear(); year++) {
-    const startMonth = (year === startDate.getUTCFullYear()) ? startDate.getUTCMonth() : 0;
-    const endMonth = (year === endDate.getUTCFullYear()) ? endDate.getUTCMonth() : 11;
+    const startMonth = year === startDate.getUTCFullYear() ? startDate.getUTCMonth() : 0;
+    const endMonth = year === endDate.getUTCFullYear() ? endDate.getUTCMonth() : 11;
 
     for (let month = startMonth; month <= endMonth; month++) {
       // Get last day of month (day 0 of next month)
@@ -107,7 +103,7 @@ export function getLastDaysOfMonthsInRange(startDay: number, endDay: number): nu
  * Parse a YYYY-MM-DD string into year, month, day parts.
  */
 export function parseDateString(dateStr: string): { year: number; month: number; day: number } {
-  const [year, month, day] = dateStr.split('-').map(Number);
+  const [year, month, day] = dateStr.split("-").map(Number);
   return { year: year || 1970, month: month || 1, day: day || 1 };
 }
 
@@ -116,7 +112,7 @@ export function parseDateString(dateStr: string): { year: number; month: number;
  */
 export function monthYearToDateString(month: number, year: number): string {
   if (month < 1 || month > 12 || year < 1900 || year > 2100) {
-    return '';
+    return "";
   }
   return formatDateString(createUTCDayDate(year, month, 15));
 }
@@ -124,8 +120,11 @@ export function monthYearToDateString(month: number, year: number): string {
 /**
  * Convert an ISO date string to birth month and year.
  */
-export function birthDateStringToMonthYear(dateStr: string | null | undefined): { month: number; year: number } {
-  if (!dateStr || dateStr.length !== 10 || dateStr.charAt(4) !== '-' || dateStr.charAt(7) !== '-') {
+export function birthDateStringToMonthYear(dateStr: string | null | undefined): {
+  month: number;
+  year: number;
+} {
+  if (!dateStr || dateStr.length !== 10 || dateStr.charAt(4) !== "-" || dateStr.charAt(7) !== "-") {
     return { month: DEFAULT_BIRTH_MONTH, year: DEFAULT_BIRTH_YEAR };
   }
   const { year, month } = parseDateString(dateStr);
@@ -147,7 +146,10 @@ export function calculateAgeFromDate(today: Date, birthDate: string | null | und
   // If birthday hasn't occurred yet this year, subtract 1
   const birthMonth = birth.getUTCMonth();
   const currentMonth = today.getMonth();
-  if (currentMonth < birthMonth || (currentMonth === birthMonth && today.getDate() < birth.getUTCDate())) {
+  if (
+    currentMonth < birthMonth ||
+    (currentMonth === birthMonth && today.getDate() < birth.getUTCDate())
+  ) {
     age -= 1;
   }
 

@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { APP_VERSION } from '@/constants';
+import { APP_VERSION } from "@/constants";
 
 const currentYear = new Date().getFullYear();
 </script>
 
 <template>
-  <main class="min-h-screen flex flex-col">
-    <div class="flex-1 flex flex-col w-full">
+  <main class="flex min-h-screen flex-col">
+    <div class="flex w-full flex-1 flex-col">
       <!-- Nav -->
-      <nav class="sticky top-0 z-50 h-20 w-full bg-background">
-        <div class="flex justify-between items-center w-full px-6 py-3">
+      <nav class="bg-background sticky top-0 z-50 h-20 w-full">
+        <div class="flex w-full items-center justify-between px-6 py-3">
           <Logo />
 
           <div class="flex items-center">
@@ -23,12 +23,12 @@ const currentYear = new Date().getFullYear();
       </nav>
 
       <!-- Main -->
-      <div class="flex-1 w-full h-full max-w-[1700px] mx-auto">
+      <div class="mx-auto h-full w-full max-w-[1700px] flex-1">
         <slot />
       </div>
 
       <!-- Footer -->
-      <footer class="flex items-center justify-between w-full p-6 text-xs text-muted-foreground">
+      <footer class="text-muted-foreground flex w-full items-center justify-between p-6 text-xs">
         <div>&copy; {{ currentYear }} All Rights Reserved</div>
 
         <div>Version {{ APP_VERSION }}</div>

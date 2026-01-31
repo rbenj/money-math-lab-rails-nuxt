@@ -6,6 +6,6 @@ export default defineNuxtRouteMiddleware(async () => {
   }
 
   if (!user.value) {
-    return navigateTo('/login');
+    return navigateTo("/login");
   }
 });

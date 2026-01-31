@@ -1,4 +1,4 @@
-import type { SerializedEntity } from '../types';
+import type { SerializedEntity } from "../types";
 
 function makeRailsPayload(data: SerializedEntity) {
   return {
@@ -7,7 +7,7 @@ function makeRailsPayload(data: SerializedEntity) {
     templateKey: data.templateKey,
     parentId: data.parentId,
     data: data.data,
-    ledgerEntriesAttributes: data.ledgerEntries.map(entry => ({
+    ledgerEntriesAttributes: data.ledgerEntries.map((entry) => ({
       id: entry.id,
       day: entry.day,
       amount: entry.amount,
@@ -25,7 +25,9 @@ export function useEntityApi() {
    * Create a new entity. Returns serialized entity that was created.
    */
   async function createEntity(planId: string, data: SerializedEntity): Promise<SerializedEntity> {
-    return await post<SerializedEntity>(`/plans/${planId}/entities`, { entity: makeRailsPayload(data) });
+    return await post<SerializedEntity>(`/plans/${planId}/entities`, {
+      entity: makeRailsPayload(data),
+    });
   }
 
   /**

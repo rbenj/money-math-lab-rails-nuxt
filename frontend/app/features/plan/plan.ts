@@ -1,9 +1,9 @@
-import { dateToEpochDay } from '@/lib/date-utils';
-import type { Entity } from '@/features/entity/entity';
-import { deserializeEntities } from '@/features/entity/serialization';
-import { FallbackEntity } from '@/features/entity/entity-types/fallback-entity';
-import { Simulation, type DataPointsByDay } from '@/features/simulation/simulation';
-import type { SerializedPlan, SerializedPlanSummary } from './types';
+import { dateToEpochDay } from "@/lib/date-utils";
+import type { Entity } from "@/features/entity/entity";
+import { deserializeEntities } from "@/features/entity/serialization";
+import { FallbackEntity } from "@/features/entity/entity-types/fallback-entity";
+import { Simulation, type DataPointsByDay } from "@/features/simulation/simulation";
+import type { SerializedPlan, SerializedPlanSummary } from "./types";
 
 export const YEARS_PAST_RETIREMENT = 15;
 
@@ -94,14 +94,16 @@ export class Plan {
       name: this.name,
       birthDate: this.birthDate,
       retirementAge: this.retirementAge,
-      entities: this.entities.filter(entity => activeEntities.includes(entity)),
+      entities: this.entities.filter((entity) => activeEntities.includes(entity)),
     });
   }
 
   /**
    * Create a copy with updated metadata.
    */
-  public withUpdates(updates: Partial<Pick<PlanInput, 'name' | 'birthDate' | 'retirementAge'>>): Plan {
+  public withUpdates(
+    updates: Partial<Pick<PlanInput, "name" | "birthDate" | "retirementAge">>,
+  ): Plan {
     return new Plan({
       id: this.id,
       name: updates.name ?? this.name,
@@ -138,7 +140,9 @@ export class Plan {
   public getRetirementDay(): number {
     const birth = new Date(this.birthDate);
     const retirementYear = birth.getUTCFullYear() + this.retirementAge;
-    const retirementDate = new Date(Date.UTC(retirementYear, birth.getUTCMonth(), birth.getUTCDate()));
+    const retirementDate = new Date(
+      Date.UTC(retirementYear, birth.getUTCMonth(), birth.getUTCDate()),
+    );
     return dateToEpochDay(retirementDate);
   }
 

@@ -1,14 +1,14 @@
-import { dateStringToEpochDay } from '@/lib/date-utils';
+import { dateStringToEpochDay } from "@/lib/date-utils";
 import {
   EntityType,
   type EntityFormData,
   type ScheduleFormData,
   type SerializedEntity,
   type SerializedLedger,
-} from '../types';
-import type { Entity } from '../entity';
-import { deserializeEntity } from '../serialization';
-import { useEntityApi } from './use-entity-api';
+} from "../types";
+import type { Entity } from "../entity";
+import { deserializeEntity } from "../serialization";
+import { useEntityApi } from "./use-entity-api";
 
 function prepScheduleData(schedule: ScheduleFormData): Record<string, unknown> {
   return {
@@ -22,7 +22,7 @@ function prepScheduleData(schedule: ScheduleFormData): Record<string, unknown> {
 }
 
 function prepEntityData(formData: EntityFormData): SerializedEntity {
-  const ledgerEntries: SerializedLedger = formData.ledgerEntries.map(entry => ({
+  const ledgerEntries: SerializedLedger = formData.ledgerEntries.map((entry) => ({
     ...entry,
     day: dateStringToEpochDay(entry.day),
   }));
@@ -64,8 +64,8 @@ function prepEntityData(formData: EntityFormData): SerializedEntity {
   }
 
   return {
-    id: formData.id ?? '',
-    name: formData.name ?? '',
+    id: formData.id ?? "",
+    name: formData.name ?? "",
     type: formData.type,
     templateKey: formData.templateKey,
     parentId: formData.parentId ?? null,

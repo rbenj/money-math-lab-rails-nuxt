@@ -1,30 +1,29 @@
 <script setup lang="ts">
-import { ArrowLeft, Cake, PalmtreeIcon, Settings } from 'lucide-vue-next';
-import { calculateAgeFromDate } from '@/lib/date-utils';
-import { isEntityActive } from '@/features/entity/utils';
-import type { Entity } from '@/features/entity/entity';
-import EntitiesList from '@/features/entity/components/EntitiesList.vue';
-import type { SerializedPlanSummary } from '@/features/plan/types';
-import { Plan } from '@/features/plan/plan';
-import { usePlanApi } from '@/features/plan/composables/use-plan-api';
-import PlanFormModal from '@/features/plan/components/PlanFormModal.vue';
-import MetricsGrid from '@/features/plan/components/MetricsGrid.vue';
-import SimulationChart from '@/features/plan/components/SimulationChart.vue';
+import { ArrowLeft, Cake, PalmtreeIcon, Settings } from "lucide-vue-next";
+import { calculateAgeFromDate } from "@/lib/date-utils";
+import { isEntityActive } from "@/features/entity/utils";
+import type { Entity } from "@/features/entity/entity";
+import EntitiesList from "@/features/entity/components/EntitiesList.vue";
+import type { SerializedPlanSummary } from "@/features/plan/types";
+import { Plan } from "@/features/plan/plan";
+import { usePlanApi } from "@/features/plan/composables/use-plan-api";
+import PlanFormModal from "@/features/plan/components/PlanFormModal.vue";
+import MetricsGrid from "@/features/plan/components/MetricsGrid.vue";
+import SimulationChart from "@/features/plan/components/SimulationChart.vue";
 
 definePageMeta({
-  middleware: 'auth',
+  middleware: "auth",
 });
 
 const route = useRoute();
 const planApi = usePlanApi();
 
-const { data: planData } = await useAsyncData(
-  `plan-${route.params.planId}`,
-  () => planApi.fetchPlan(route.params.planId as string),
+const { data: planData } = await useAsyncData(`plan-${route.params.planId}`, () =>
+  planApi.fetchPlan(route.params.planId as string),
 );
 
 if (!planData.value) {
-  throw createError({ statusCode: 404, message: 'Plan not found' });
+  throw createError({ statusCode: 404, message: "Plan not found" });
 }
 
 const plan = Plan.fromSerialized(planData.value);
@@ -40,28 +39,32 @@ const isSettingsOpen = ref(false);
 const currentAge = computed(() => calculateAgeFromDate(new Date(), birthDate.value));
 
 const entitiesMap = computed(() => {
-  return new Map(entities.value.map(e => [e.id, e]));
+  return new Map(entities.value.map((e) => [e.id, e]));
 });
 
 const activeEntityIds = computed(() => {
   return new Set(
     entities.value
-      .filter(e => isEntityActive(e, soloedEntityIds.value, mutedEntityIds.value, entitiesMap.value))
-      .map(e => e.id),
+      .filter((e) =>
+        isEntityActive(e, soloedEntityIds.value, mutedEntityIds.value, entitiesMap.value),
+      )
+      .map((e) => e.id),
   );
 });
 
 // Current plan summary gets passed to the settings modal
-const currentPlanSummary = computed((): SerializedPlanSummary => ({
-  id: route.params.planId as string,
-  name: planName.value,
-  birthDate: birthDate.value,
-  retirementAge: retirementAge.value,
-}));
+const currentPlanSummary = computed(
+  (): SerializedPlanSummary => ({
+    id: route.params.planId as string,
+    name: planName.value,
+    birthDate: birthDate.value,
+    retirementAge: retirementAge.value,
+  }),
+);
 
 // Build the filtered plan that the simulation will run on
 const filteredPlan = computed(() => {
-  const activeEntities = entities.value.filter(e => activeEntityIds.value.has(e.id));
+  const activeEntities = entities.value.filter((e) => activeEntityIds.value.has(e.id));
   return new Plan({
     id: route.params.planId as string,
     name: planName.value,
@@ -103,20 +106,18 @@ function handleEntityCreated(entity: Entity) {
 }
 
 function handleEntityUpdated(updated: Entity) {
-  entities.value = entities.value.map(e =>
-    e.id === updated.id ? updated : e,
-  );
+  entities.value = entities.value.map((e) => (e.id === updated.id ? updated : e));
 }
 
 function handleEntityDeleted(entityId: string) {
-  entities.value = entities.value.filter(e => e.id !== entityId);
+  entities.value = entities.value.filter((e) => e.id !== entityId);
   mutedEntityIds.value.delete(entityId);
   soloedEntityIds.value.delete(entityId);
 }
 </script>
 
 <template>
-  <div class="flex flex-col h-full gap-8 px-4 lg:flex-row lg:gap-14 lg:px-12">
+  <div class="flex h-full flex-col gap-8 px-4 lg:flex-row lg:gap-14 lg:px-12">
     <!-- Left -->
     <aside class="order-2 h-full w-full pt-4 lg:order-1 lg:w-2/5 xl:w-1/3">
       <ClientOnly>
@@ -139,16 +140,18 @@ function handleEntityDeleted(entityId: string) {
     <!-- Right -->
     <section class="order-1 flex-1 lg:order-2">
       <!-- Sticky container -->
-      <div class="pt-3 flex flex-col gap-8 lg:sticky lg:top-20">
+      <div class="flex flex-col gap-8 pt-3 lg:sticky lg:top-20">
         <!-- Header -->
-        <header class="flex flex-col items-between pb-2 xl:flex-row xl:items-start xl:justify-between">
+        <header
+          class="items-between flex flex-col pb-2 xl:flex-row xl:items-start xl:justify-between"
+        >
           <!-- Breadcrumb -->
           <div class="flex items-center gap-3 text-xl tracking-tight md:text-2xl lg:text-3xl">
             <NuxtLink
               to="/plans"
-              class="flex items-center justify-center w-10 h-10 opacity-70 transition-opacity relative hover:opacity-100"
+              class="relative flex h-10 w-10 items-center justify-center opacity-70 transition-opacity hover:opacity-100"
             >
-              <svg class="absolute inset-0 w-full h-full" viewBox="0 0 64 64">
+              <svg class="absolute inset-0 h-full w-full" viewBox="0 0 64 64">
                 <circle
                   cx="32"
                   cy="32"
@@ -164,7 +167,10 @@ function handleEntityDeleted(entityId: string) {
             </NuxtLink>
 
             <div class="flex">
-              <NuxtLink to="/plans" class="text-muted-foreground hover:text-foreground no-underline mr-2 whitespace-nowrap">
+              <NuxtLink
+                to="/plans"
+                class="text-muted-foreground hover:text-foreground mr-2 whitespace-nowrap no-underline"
+              >
                 Plans /
               </NuxtLink>
               <span class="font-semibold">{{ planName }}</span>
@@ -172,15 +178,23 @@ function handleEntityDeleted(entityId: string) {
           </div>
 
           <!-- Controls -->
-          <div class="flex items-center gap-6 justify-end mt-6 -mb-16 z-2 xl:justify-start xl:pt-1 xl:m-0">
+          <div
+            class="z-2 mt-6 -mb-16 flex items-center justify-end gap-6 xl:m-0 xl:justify-start xl:pt-1"
+          >
             <ClientOnly>
-              <div class="flex items-center gap-1 text-sm text-muted-foreground" title="Current age">
+              <div
+                class="text-muted-foreground flex items-center gap-1 text-sm"
+                title="Current age"
+              >
                 <Cake class="h-6 w-6" />
                 <span>{{ currentAge }}</span>
               </div>
             </ClientOnly>
 
-            <div class="flex items-center gap-1 text-sm text-muted-foreground" title="Retirement age">
+            <div
+              class="text-muted-foreground flex items-center gap-1 text-sm"
+              title="Retirement age"
+            >
               <PalmtreeIcon class="h-6 w-6" />
               <span>{{ retirementAge }}</span>
             </div>

@@ -1,10 +1,10 @@
 export enum EntityType {
-  Account = 'account',
-  Debt = 'debt',
-  Expense = 'expense',
-  Holding = 'holding',
-  Income = 'income',
-  Possession = 'possession',
+  Account = "account",
+  Debt = "debt",
+  Expense = "expense",
+  Holding = "holding",
+  Income = "income",
+  Possession = "possession",
 }
 
 export interface SerializedEntity {

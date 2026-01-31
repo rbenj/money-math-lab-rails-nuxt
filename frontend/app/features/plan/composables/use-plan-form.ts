@@ -1,6 +1,6 @@
-import { monthYearToDateString } from '@/lib/date-utils';
-import type { SerializedPlanSummary } from '../types';
-import { usePlanApi } from './use-plan-api';
+import { monthYearToDateString } from "@/lib/date-utils";
+import type { SerializedPlanSummary } from "../types";
+import { usePlanApi } from "./use-plan-api";
 
 interface FormData {
   name: string;
@@ -13,7 +13,10 @@ export function usePlanForm() {
   const planApi = usePlanApi();
   const isSubmitting = ref(false);
 
-  async function createPlan(formData: FormData, useExample: boolean): Promise<SerializedPlanSummary> {
+  async function createPlan(
+    formData: FormData,
+    useExample: boolean,
+  ): Promise<SerializedPlanSummary> {
     isSubmitting.value = true;
     try {
       const birthDate = monthYearToDateString(formData.birthMonth, formData.birthYear);

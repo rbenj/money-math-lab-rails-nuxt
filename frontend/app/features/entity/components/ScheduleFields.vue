@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { ScheduleType } from '@/lib/schedule';
-import type { ScheduleFormData } from '../types';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScheduleType } from "@/lib/schedule";
+import type { ScheduleFormData } from "../types";
 
 const SCHEDULE_TYPES = Object.entries(ScheduleType).map(([label, value]) => ({
   value: value as ScheduleType,
@@ -15,27 +15,27 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:modelValue': [value: ScheduleFormData];
+  "update:modelValue": [value: ScheduleFormData];
 }>();
 
 function handleTypeChange(type: string) {
   const newValue: ScheduleFormData = {
     ...props.modelValue,
     type,
-    daysOfMonth: type === 'monthly' ? [1] : undefined,
-    daysOfWeek: type === 'weekly' ? [1] : undefined,
-    interval: type === 'custom' ? 1 : undefined,
+    daysOfMonth: type === "monthly" ? [1] : undefined,
+    daysOfWeek: type === "weekly" ? [1] : undefined,
+    interval: type === "custom" ? 1 : undefined,
   };
-  emit('update:modelValue', newValue);
+  emit("update:modelValue", newValue);
 }
 
 function handleDaysOfMonthChange(input: string) {
   const days = input
-    .split(',')
-    .map(s => parseInt(s.trim(), 10))
-    .filter(n => !isNaN(n) && n >= 1 && n <= 31);
+    .split(",")
+    .map((s) => parseInt(s.trim(), 10))
+    .filter((n) => !isNaN(n) && n >= 1 && n <= 31);
 
-  emit('update:modelValue', {
+  emit("update:modelValue", {
     ...props.modelValue,
     daysOfMonth: days.length > 0 ? days : undefined,
   });
@@ -43,23 +43,23 @@ function handleDaysOfMonthChange(input: string) {
 
 function handleDaysOfWeekChange(input: string) {
   const days = input
-    .split(',')
-    .map(s => parseInt(s.trim(), 10))
-    .filter(n => !isNaN(n) && n >= 0 && n <= 6);
+    .split(",")
+    .map((s) => parseInt(s.trim(), 10))
+    .filter((n) => !isNaN(n) && n >= 0 && n <= 6);
 
-  emit('update:modelValue', {
+  emit("update:modelValue", {
     ...props.modelValue,
     daysOfWeek: days.length > 0 ? days : undefined,
   });
 }
 
 function update(updates: Partial<ScheduleFormData>) {
-  emit('update:modelValue', { ...props.modelValue, ...updates });
+  emit("update:modelValue", { ...props.modelValue, ...updates });
 }
 </script>
 
 <template>
-  <div class="space-y-3 p-3 border rounded-md">
+  <div class="space-y-3 rounded-md border p-3">
     <Label class="font-medium">{{ label }}</Label>
 
     <div class="grid grid-cols-2 gap-3">
@@ -68,7 +68,7 @@ function update(updates: Partial<ScheduleFormData>) {
         <select
           id="schedule-type"
           :value="modelValue.type"
-          class="w-full h-9 rounded-md border border-input bg-background px-3 py-1 text-sm"
+          class="border-input bg-background h-9 w-full rounded-md border px-3 py-1 text-sm"
           @change="handleTypeChange(($event.target as HTMLSelectElement).value)"
         >
           <option v-for="type in SCHEDULE_TYPES" :key="type.value" :value="type.value">

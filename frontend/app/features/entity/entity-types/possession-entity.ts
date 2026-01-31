@@ -1,8 +1,8 @@
-import { getLastDaysOfMonthsInRange } from '@/lib/date-utils';
-import { Transaction } from '@/features/simulation/transaction';
-import type { Snapshot } from '@/features/simulation/snapshot';
-import { EntityType, type SerializedEntity } from '../types';
-import { Entity, type EntityInput } from '../entity';
+import { getLastDaysOfMonthsInRange } from "@/lib/date-utils";
+import { Transaction } from "@/features/simulation/transaction";
+import type { Snapshot } from "@/features/simulation/snapshot";
+import { EntityType, type SerializedEntity } from "../types";
+import { Entity, type EntityInput } from "../entity";
 
 interface PossessionEntityInput extends EntityInput {
   growthRate: number;
@@ -20,7 +20,7 @@ export class PossessionEntity extends Entity {
       name: data.name,
       templateKey: data.templateKey,
       parentId: data.parentId ?? undefined,
-      ledger: data.ledgerEntries.map(e => ({
+      ledger: data.ledgerEntries.map((e) => ({
         id: e.id,
         day: e.day,
         amount: e.amount ?? undefined,
@@ -69,7 +69,7 @@ export class PossessionEntity extends Entity {
   }
 
   public simulateDay(day: number, snapshots: Snapshot[]): Transaction[] {
-    const ledgerEntry = this.ledger.find(e => e.day === day);
+    const ledgerEntry = this.ledger.find((e) => e.day === day);
     if (ledgerEntry) {
       return [
         new Transaction({
@@ -91,12 +91,14 @@ export class PossessionEntity extends Entity {
     const monthlyRate = this.growthRate / 12;
     const growthAmount = currentValue * monthlyRate;
 
-    return growthAmount === 0 ? [] : [
-      new Transaction({
-        day,
-        targetEntityId: this.id,
-        amount: growthAmount,
-      }),
-    ];
+    return growthAmount === 0
+      ? []
+      : [
+          new Transaction({
+            day,
+            targetEntityId: this.id,
+            amount: growthAmount,
+          }),
+        ];
   }
 }

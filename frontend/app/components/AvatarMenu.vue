@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 defineOptions({
   inheritAttrs: false,
@@ -18,7 +18,7 @@ const attrs = useAttrs();
 const { user, logout } = useAuth();
 
 const initial = computed(() => {
-  return user.value?.email.charAt(0).toUpperCase() || '?';
+  return user.value?.email.charAt(0).toUpperCase() || "?";
 });
 
 async function handleLogout() {
@@ -37,7 +37,7 @@ async function handleLogout() {
         <DropdownMenuTrigger as-child>
           <Button variant="ghost" size="icon" class="rounded-full" v-bind="attrs">
             <Avatar>
-              <AvatarFallback class="font-semibold text-background bg-foreground">
+              <AvatarFallback class="text-background bg-foreground font-semibold">
                 {{ initial }}
               </AvatarFallback>
             </Avatar>

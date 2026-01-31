@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { X } from 'lucide-vue-next';
+import { X } from "lucide-vue-next";
 import {
   MONTHS,
   BIRTH_YEARS,
   DEFAULT_BIRTH_MONTH,
   DEFAULT_BIRTH_YEAR,
   DEFAULT_RETIREMENT_AGE,
-} from '@/constants';
-import { birthDateStringToMonthYear } from '@/lib/date-utils';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import type { SerializedPlanSummary } from '../types';
-import { usePlanForm } from '../composables/use-plan-form';
+} from "@/constants";
+import { birthDateStringToMonthYear } from "@/lib/date-utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import type { SerializedPlanSummary } from "../types";
+import { usePlanForm } from "../composables/use-plan-form";
 
 const props = defineProps<{
-  initialData?: SerializedPlanSummary
-  open: boolean
-  planId?: string
-  submitLabel: string
-  title: string
+  initialData?: SerializedPlanSummary;
+  open: boolean;
+  planId?: string;
+  submitLabel: string;
+  title: string;
 }>();
 
 const emit = defineEmits<{
@@ -34,7 +34,7 @@ const isCreating = computed(() => !props.planId);
 function getInitialFormValues() {
   if (!props.initialData) {
     return {
-      name: '',
+      name: "",
       birthMonth: DEFAULT_BIRTH_MONTH,
       birthYear: DEFAULT_BIRTH_YEAR,
       retirementAge: DEFAULT_RETIREMENT_AGE,
@@ -61,36 +61,31 @@ async function handleSubmit() {
     const planSummary: SerializedPlanSummary = props.planId
       ? await updatePlan(props.planId, formData.value)
       : await createPlan(formData.value, useExampleData.value);
-    emit('success', planSummary);
+    emit("success", planSummary);
   } catch (error) {
-    console.error('Failed to save plan', error);
+    console.error("Failed to save plan", error);
   }
 }
 
 function handleClose() {
-  emit('close');
+  emit("close");
 }
 </script>
 
 <template>
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
     <!-- Backdrop -->
-    <div
-      class="absolute inset-0 bg-background/80 backdrop-blur-sm"
-      @click="handleClose"
-    />
+    <div class="bg-background/80 absolute inset-0 backdrop-blur-sm" @click="handleClose" />
 
     <!-- Modal -->
-    <div class="relative overflow-y-auto w-full max-w-md max-h-[90vh] m-4 border rounded-lg shadow-lg bg-background">
+    <div
+      class="bg-background relative m-4 max-h-[90vh] w-full max-w-md overflow-y-auto rounded-lg border shadow-lg"
+    >
       <!-- Header -->
-      <header class="sticky top-0 flex items-center justify-between p-4 border-b bg-background">
+      <header class="bg-background sticky top-0 flex items-center justify-between border-b p-4">
         <h2 class="text-lg font-semibold">{{ title }}</h2>
 
-        <Button
-          size="icon"
-          variant="ghost"
-          @click="handleClose"
-        >
+        <Button size="icon" variant="ghost" @click="handleClose">
           <span class="sr-only">Close</span>
           <X />
         </Button>
@@ -101,17 +96,13 @@ function handleClose() {
         <form class="space-y-6" @submit.prevent="handleSubmit">
           <div class="space-y-2">
             <Label for="name">Plan Name</Label>
-            <Input
-              id="name"
-              v-model="formData.name"
-              required
-            />
+            <Input id="name" v-model="formData.name" required />
           </div>
 
           <div class="space-y-4">
             <div>
               <Label class="font-medium">Birth Date</Label>
-              <div class="mt-1 text-sm text-muted-foreground">
+              <div class="text-muted-foreground mt-1 text-sm">
                 Used to calculate your current age and retirement timeline
               </div>
             </div>
@@ -122,7 +113,7 @@ function handleClose() {
                 <select
                   id="birthMonth"
                   v-model.number="formData.birthMonth"
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                 >
                   <option value="">Select</option>
                   <option v-for="month in MONTHS" :key="month.value" :value="month.value">
@@ -136,7 +127,7 @@ function handleClose() {
                 <select
                   id="birthYear"
                   v-model.number="formData.birthYear"
-                  class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
                 >
                   <option value="">Select</option>
                   <option v-for="year in BIRTH_YEARS" :key="year" :value="year">
@@ -156,38 +147,27 @@ function handleClose() {
               min="10"
               type="number"
             />
-            <div class="text-sm text-muted-foreground">
-              Your planned retirement age
-            </div>
+            <div class="text-muted-foreground text-sm">Your planned retirement age</div>
           </div>
 
-          <div v-if="isCreating" class="flex items-center gap-2 p-3 border rounded-md bg-muted/50">
+          <div v-if="isCreating" class="bg-muted/50 flex items-center gap-2 rounded-md border p-3">
             <input
               id="useExample"
               v-model="useExampleData"
               type="checkbox"
-              class="h-4 w-4 rounded border-input"
-            >
+              class="border-input h-4 w-4 rounded"
+            />
             <Label for="useExample" class="cursor-pointer">
               <span class="font-medium">Start with example data</span>
-              <span class="block text-sm text-muted-foreground">
+              <span class="text-muted-foreground block text-sm">
                 Populate with sample income, accounts, debts, and expenses
               </span>
             </Label>
           </div>
 
           <div class="flex justify-end gap-2 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              @click="handleClose"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              :disabled="isDisabled"
-            >
+            <Button type="button" variant="outline" @click="handleClose"> Cancel </Button>
+            <Button type="submit" :disabled="isDisabled">
               {{ submitLabel }}
             </Button>
           </div>

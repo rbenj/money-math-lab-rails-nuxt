@@ -1,4 +1,4 @@
-import type { SerializedEntity } from '@/features/entity/types';
+import type { SerializedEntity } from "@/features/entity/types";
 
 /**
  * Serialized summary of a Plan, pretty much a plan without entities.

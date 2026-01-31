@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 definePageMeta({
   layout: false,
@@ -10,10 +10,10 @@ definePageMeta({
 
 const { register } = useAuth();
 
-const name = ref('');
-const email = ref('');
-const password = ref('');
-const passwordConfirmation = ref('');
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const passwordConfirmation = ref("");
 const error = ref<string | null>(null);
 const isLoading = ref(false);
 
@@ -22,16 +22,16 @@ async function handleRegister() {
   error.value = null;
 
   if (password.value !== passwordConfirmation.value) {
-    error.value = 'Passwords do not match';
+    error.value = "Passwords do not match";
     isLoading.value = false;
     return;
   }
 
   try {
     await register(email.value, password.value, passwordConfirmation.value, name.value);
-    await navigateTo('/plans');
+    await navigateTo("/plans");
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'An error occurred';
+    error.value = e instanceof Error ? e.message : "An error occurred";
   } finally {
     isLoading.value = false;
   }
@@ -39,15 +39,13 @@ async function handleRegister() {
 </script>
 
 <template>
-  <div class="flex min-h-screen w-full items-center justify-center p-6 bg-background">
+  <div class="bg-background flex min-h-screen w-full items-center justify-center p-6">
     <div class="w-full max-w-sm">
       <Card>
         <CardHeader>
           <CardTitle class="text-2xl">Create Account</CardTitle>
 
-          <CardDescription>
-            Enter your details to create a new account
-          </CardDescription>
+          <CardDescription> Enter your details to create a new account </CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -55,13 +53,7 @@ async function handleRegister() {
             <div class="flex flex-col gap-6">
               <div class="grid gap-2">
                 <Label for="name">Name</Label>
-                <Input
-                  id="name"
-                  v-model="name"
-                  type="text"
-                  placeholder="Your name"
-                  required
-                />
+                <Input id="name" v-model="name" type="text" placeholder="Your name" required />
               </div>
 
               <div class="grid gap-2">
@@ -77,12 +69,7 @@ async function handleRegister() {
 
               <div class="grid gap-2">
                 <Label for="password">Password</Label>
-                <Input
-                  id="password"
-                  v-model="password"
-                  type="password"
-                  required
-                />
+                <Input id="password" v-model="password" type="password" required />
               </div>
 
               <div class="grid gap-2">
@@ -95,18 +82,16 @@ async function handleRegister() {
                 />
               </div>
 
-              <div v-if="error" class="text-sm text-destructive" role="alert">{{ error }}</div>
+              <div v-if="error" class="text-destructive text-sm" role="alert">{{ error }}</div>
 
               <Button type="submit" class="w-full" :disabled="isLoading">
-                {{ isLoading ? 'Creating account...' : 'Create Account' }}
+                {{ isLoading ? "Creating account..." : "Create Account" }}
               </Button>
             </div>
 
             <div class="mt-4 text-center text-sm">
               Already have an account?
-              <NuxtLink to="/login" class="underline underline-offset-4">
-                Login
-              </NuxtLink>
+              <NuxtLink to="/login" class="underline underline-offset-4"> Login </NuxtLink>
             </div>
           </form>
         </CardContent>
