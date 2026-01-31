@@ -28,7 +28,7 @@ export class Simulation {
   private readonly dataPoints: DataPointsByDay;
   private readonly fallbackEntity: FallbackEntity;
 
-  public constructor(entities: Entity[], simulationYears: number) {
+  public constructor(entities: Entity[], simulationYears: number, todayEpochDay?: number) {
     this.entities = new Map();
     this.snapshots = new Map();
     this.dataPoints = new Map();
@@ -56,7 +56,8 @@ export class Simulation {
     }
 
     if (!earliestDay) {
-      earliestDay = getTodayEpochDay();
+      // Use provided day to avoid hydration mismatch
+      earliestDay = todayEpochDay ?? getTodayEpochDay();
     }
 
     this.startDay = earliestDay;

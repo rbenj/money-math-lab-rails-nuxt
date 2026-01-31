@@ -138,10 +138,10 @@ export function birthDateStringToMonthYear(dateStr: string | null | undefined): 
 }
 
 /**
- * Calculate age from birth date string (YYYY-MM-DD).
+ * Calculate age from birth date string (YYYY-MM-DD), optionally specify today for deterministic result.
  */
-export function calculateAge(birthDate: string | null | undefined): number {
-  const today = new Date();
+export function calculateAge(birthDate: string | null | undefined, todayEpochDay?: number): number {
+  const today = todayEpochDay !== undefined ? epochDayToDate(todayEpochDay) : new Date();
   const todayYear = today.getUTCFullYear();
   const todayMonth = today.getUTCMonth();
   const todayDay = today.getUTCDate();

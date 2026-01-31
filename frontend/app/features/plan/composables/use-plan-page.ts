@@ -1,4 +1,4 @@
-import { calculateAge } from "@/lib/date-utils";
+import { calculateAge, getTodayEpochDay } from "@/lib/date-utils";
 import { isEntityActive } from "@/features/entity/utils";
 import type { Entity } from "@/features/entity/entity";
 import type { SerializedPlanSummary } from "../types";
@@ -8,13 +8,16 @@ import { usePlanApi } from "./use-plan-api";
 export async function usePlanPage(planId: string) {
   const planApi = usePlanApi();
 
+  // Single source of truth for today epoch day to avoid hydration mismatches
+  const todayEpochDay = getTodayEpochDay();
+
   const { data: planData } = await useAsyncData(`plan-${planId}`, () => planApi.fetchPlan(planId));
 
   if (!planData.value) {
     throw createError({ statusCode: 404, message: "Plan not found" });
   }
 
-  const basePlan = Plan.fromSerialized(planData.value);
+  const basePlan = Plan.fromSerialized(planData.value, todayEpochDay);
 
   const planName = ref(basePlan.name);
   const birthDate = ref(basePlan.birthDate);
@@ -23,7 +26,7 @@ export async function usePlanPage(planId: string) {
   const mutedEntityIds = ref(new Set<string>());
   const soloedEntityIds = ref(new Set<string>());
 
-  const currentAge = computed(() => calculateAge(birthDate.value));
+  const currentAge = computed(() => calculateAge(birthDate.value, todayEpochDay));
 
   const plan = computed(
     () =>
@@ -33,6 +36,7 @@ export async function usePlanPage(planId: string) {
         birthDate: birthDate.value,
         retirementAge: retirementAge.value,
         entities: entities.value,
+        todayEpochDay,
       }),
   );
 
@@ -57,6 +61,7 @@ export async function usePlanPage(planId: string) {
       birthDate: birthDate.value,
       retirementAge: retirementAge.value,
       entities: activeEntities,
+      todayEpochDay,
     }).simulate();
   });
 

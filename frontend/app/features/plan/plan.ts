@@ -15,6 +15,7 @@ export interface PlanInput {
   birthDate: string; // YYYY-MM-DD
   retirementAge: number;
   entities?: Entity[];
+  todayEpochDay?: number; // Deterministic epoch day for today
 }
 
 /**
@@ -33,13 +34,14 @@ export class Plan {
   /**
    * Create a Plan from serialized plan data.
    */
-  public static fromSerialized(data: SerializedPlan): Plan {
+  public static fromSerialized(data: SerializedPlan, todayEpochDay?: number): Plan {
     return new Plan({
       id: data.id,
       name: data.name,
       birthDate: data.birthDate,
       retirementAge: data.retirementAge,
       entities: deserializeEntities(data.entities),
+      todayEpochDay,
     });
   }
 
@@ -49,8 +51,7 @@ export class Plan {
     this.birthDate = input.birthDate;
     this.retirementAge = input.retirementAge;
     this.entities = input.entities ?? [];
-
-    this.todayDay = getTodayEpochDay();
+    this.todayDay = input.todayEpochDay ?? getTodayEpochDay();
   }
 
   /**
@@ -76,11 +77,11 @@ export class Plan {
     // Add fallback entity and run simulation
     const entities = [new FallbackEntity(), ...this.entities];
 
-    const currentAge = calculateAge(this.birthDate);
+    const currentAge = calculateAge(this.birthDate, this.todayDay);
     const targetAge = this.retirementAge + YEARS_PAST_RETIREMENT;
     const projectionYears = Math.max(1, targetAge - currentAge);
 
-    this.simulation = new Simulation(entities, projectionYears);
+    this.simulation = new Simulation(entities, projectionYears, this.todayDay);
 
     return this;
   }
@@ -95,6 +96,7 @@ export class Plan {
       birthDate: this.birthDate,
       retirementAge: this.retirementAge,
       entities: this.entities.filter((entity) => activeEntities.includes(entity)),
+      todayEpochDay: this.todayDay,
     });
   }
 
@@ -110,6 +112,7 @@ export class Plan {
       birthDate: updates.birthDate ?? this.birthDate,
       retirementAge: updates.retirementAge ?? this.retirementAge,
       entities: this.entities,
+      todayEpochDay: this.todayDay,
     });
   }
 
@@ -125,6 +128,13 @@ export class Plan {
    */
   public getSimulationEndDay(): number {
     return this.simulation?.endDay ?? 0;
+  }
+
+  /**
+   * Get today's epoch day used by this plan instance.
+   */
+  public getTodayEpochDay(): number {
+    return this.todayDay;
   }
 
   /**
