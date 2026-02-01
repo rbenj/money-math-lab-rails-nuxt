@@ -143,10 +143,11 @@ const displayEntries = computed(() =>
           type="button"
           variant="ghost"
           size="sm"
+          aria-label="Remove entry"
           :disabled="displayEntries.length <= 1"
           @click="handleRemoveEntry(index)"
         >
-          <Trash2 />
+          <Trash2 aria-hidden="true" />
         </Button>
       </div>
     </div>

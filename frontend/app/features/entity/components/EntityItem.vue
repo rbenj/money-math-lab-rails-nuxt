@@ -66,6 +66,8 @@ const categoryInnerClass = computed(() => {
         "
         size="icon"
         variant="outline"
+        :aria-label="isMuted ? 'Unmute entity' : 'Mute entity'"
+        :aria-pressed="isMuted"
         @click="emit('mute', entity.id)"
       >
         M
@@ -79,6 +81,8 @@ const categoryInnerClass = computed(() => {
         "
         size="icon"
         variant="outline"
+        :aria-label="isSoloed ? 'Unsolo entity' : 'Solo entity'"
+        :aria-pressed="isSoloed"
         @click="emit('solo', entity.id)"
       >
         S
@@ -106,7 +110,12 @@ const categoryInnerClass = computed(() => {
         <!-- Hamburger -->
         <DropdownMenu>
           <DropdownMenuTrigger as-child>
-            <Button variant="ghost" size="icon" class="hover:bg-transparent">
+            <Button
+              variant="ghost"
+              size="icon"
+              class="hover:bg-transparent"
+              aria-label="Entity options"
+            >
               <MoreVertical />
             </Button>
           </DropdownMenuTrigger>

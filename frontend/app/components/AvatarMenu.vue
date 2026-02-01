@@ -24,7 +24,13 @@ async function handleLogout() {
     <template v-else>
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
-          <Button variant="ghost" size="icon" class="rounded-full" v-bind="attrs">
+          <Button
+            variant="ghost"
+            size="icon"
+            class="rounded-full"
+            aria-label="User menu"
+            v-bind="attrs"
+          >
             <Avatar>
               <AvatarFallback class="text-background bg-foreground font-semibold">
                 {{ initial }}

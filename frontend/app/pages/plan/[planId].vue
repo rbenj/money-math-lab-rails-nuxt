@@ -86,9 +86,10 @@ function onPlanUpdated(summary: SerializedPlanSummary) {
           <div class="flex items-center gap-3 text-xl tracking-tight md:text-2xl lg:text-3xl">
             <NuxtLink
               to="/plans"
+              aria-label="Back to plans"
               class="relative flex h-10 w-10 items-center justify-center opacity-70 transition-opacity hover:opacity-100"
             >
-              <svg class="absolute inset-0 h-full w-full" viewBox="0 0 64 64">
+              <svg class="absolute inset-0 h-full w-full" viewBox="0 0 64 64" aria-hidden="true">
                 <circle
                   cx="32"
                   cy="32"
@@ -100,7 +101,7 @@ function onPlanUpdated(summary: SerializedPlanSummary) {
                   class="text-foreground"
                 />
               </svg>
-              <ArrowLeft :size="20" />
+              <ArrowLeft :size="20" aria-hidden="true" />
             </NuxtLink>
 
             <div class="flex">
@@ -118,13 +119,16 @@ function onPlanUpdated(summary: SerializedPlanSummary) {
           <div
             class="text-muted-foreground z-2 mt-6 -mb-16 flex items-center justify-end gap-6 xl:m-0 xl:justify-start xl:pt-1"
           >
-            <div class="flex items-center gap-1 text-sm" title="Current age">
-              <Cake />
+            <div class="flex items-center gap-1 text-sm" :aria-label="`Current age: ${currentAge}`">
+              <Cake aria-hidden="true" />
               <span>{{ currentAge }}</span>
             </div>
 
-            <div class="flex items-center gap-1 text-sm" title="Retirement age">
-              <PalmtreeIcon />
+            <div
+              class="flex items-center gap-1 text-sm"
+              :aria-label="`Retirement age: ${retirementAge}`"
+            >
+              <PalmtreeIcon aria-hidden="true" />
               <span>{{ retirementAge }}</span>
             </div>
 

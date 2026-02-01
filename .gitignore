@@ -109,6 +109,3 @@ dist/
 
 # TypeScript
 *.tsbuildinfo
-
-# Pile on here:
-/port-reference/

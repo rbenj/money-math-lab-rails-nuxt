@@ -44,7 +44,7 @@ const formattedPercent = computed(() => {
 
       <CardAction>
         <Badge variant="outline" class="border-card-alt-muted-foreground gap-1 rounded-full">
-          <component :is="TrendIcon" />
+          <component :is="TrendIcon" aria-hidden="true" />
           {{ formattedPercent }}
         </Badge>
       </CardAction>
@@ -53,7 +53,7 @@ const formattedPercent = computed(() => {
     <CardFooter>
       <div class="text-card-alt-muted-foreground flex gap-2">
         {{ trendDirection }} {{ trendLabel }}
-        <component :is="TrendIcon" class="text-card-alt-foreground h-5 w-5" />
+        <component :is="TrendIcon" class="text-card-alt-foreground h-5 w-5" aria-hidden="true" />
       </div>
     </CardFooter>
   </Card>
