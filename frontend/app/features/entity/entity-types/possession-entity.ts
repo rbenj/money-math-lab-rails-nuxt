@@ -8,9 +8,6 @@ interface PossessionEntityInput extends EntityInput {
   growthRate: number;
 }
 
-/**
- * Represents a possession entity (house, car, etc.) with value appreciation/depreciation.
- */
 export class PossessionEntity extends Entity {
   public readonly growthRate: number;
 
@@ -64,7 +61,6 @@ export class PossessionEntity extends Entity {
     const lastDaysOfMonths = getLastDaysOfMonthsInRange(effectiveStartDay, endDay);
     days.push(...lastDaysOfMonths);
 
-    // Deduplicate and sort
     return Array.from(new Set(days)).sort((a, b) => a - b);
   }
 

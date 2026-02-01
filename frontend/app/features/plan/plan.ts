@@ -20,9 +20,6 @@ export interface PlanInput {
   todayEpochDay?: number; // Deterministic epoch day for today
 }
 
-/**
- * Scenario information and a collection of financial entities that can be simulated.
- */
 export class Plan {
   public readonly id: string;
   public readonly name: string;
@@ -33,9 +30,6 @@ export class Plan {
   private todayDay: number;
   private simulation?: Simulation;
 
-  /**
-   * Create a Plan from serialized plan data.
-   */
   public static fromSerialized(data: SerializedPlan, todayEpochDay?: number): Plan {
     return new Plan({
       id: data.id,
@@ -56,9 +50,6 @@ export class Plan {
     this.todayDay = input.todayEpochDay ?? getTodayEpochDay();
   }
 
-  /**
-   * Convert to serialized plan summary data.
-   */
   public toSerialized(): SerializedPlanSummary {
     return {
       id: this.id,
@@ -68,9 +59,6 @@ export class Plan {
     };
   }
 
-  /**
-   * Run simulation to enable access to simulation data, chainable.
-   */
   public simulate(): this {
     if (this.simulation) {
       return this;
@@ -90,9 +78,6 @@ export class Plan {
     return this;
   }
 
-  /**
-   * Make a new Plan with filtered entities.
-   */
   public filter(activeEntities: Entity[]): Plan {
     return new Plan({
       id: this.id,
@@ -104,9 +89,6 @@ export class Plan {
     });
   }
 
-  /**
-   * Create a copy with updated metadata.
-   */
   public withUpdates(
     updates: Partial<Pick<PlanInput, "name" | "birthDate" | "retirementAge">>,
   ): Plan {
@@ -120,97 +102,58 @@ export class Plan {
     });
   }
 
-  /**
-   * Get the start day of the simulation.
-   */
   public getSimulationStartDay(): number {
     return this.simulation?.startDay ?? 0;
   }
 
-  /**
-   * Get the end day of the simulation.
-   */
   public getSimulationEndDay(): number {
     return this.simulation?.endDay ?? 0;
   }
 
-  /**
-   * Get today's epoch day used by this plan instance.
-   */
   public getTodayEpochDay(): number {
     return this.todayDay;
   }
 
-  /**
-   * Get data points for all years in the simulation.
-   */
   public getDataPointsForAllYears(): DataPointsByDay {
     return this.simulation?.getDataPointsForAllYears() ?? new Map();
   }
 
-  /**
-   * Get the normalized retirement day based on birth date and retirement age.
-   */
   public getRetirementDay(): number {
     const { year, month, day } = parseDateString(this.birthDate);
     return createEpochDay(year + this.retirementAge, month, day);
   }
 
-  /**
-   * Get sum of all positive balances for today.
-   */
   public getAssetsForToday(): number {
     return this.simulation?.getAssets(this.todayDay) ?? 0;
   }
 
-  /**
-   * Get sum of all positive balances for one year ago.
-   */
   public getAssetsForLastYear(): number {
     const lastYearDay = this.todayDay - 365;
     return this.simulation?.getAssets(lastYearDay) ?? 0;
   }
 
-  /**
-   * Get sum of all negative balances for today.
-   */
   public getDebtForToday(): number {
     return this.simulation?.getDebt(this.todayDay) ?? 0;
   }
 
-  /**
-   * Get sum of all negative balances for one year ago.
-   */
   public getDebtForLastYear(): number {
     const lastYearDay = this.todayDay - 365;
     return this.simulation?.getDebt(lastYearDay) ?? 0;
   }
 
-  /**
-   * Get total net worth for today.
-   */
   public getNetWorthForToday(): number {
     return this.simulation?.getNetWorth(this.todayDay) ?? 0;
   }
 
-  /**
-   * Get total net worth for one year ago.
-   */
   public getNetWorthForLastYear(): number {
     const lastYearDay = this.todayDay - 365;
     return this.simulation?.getNetWorth(lastYearDay) ?? 0;
   }
 
-  /**
-   * Get the value of an entity for today.
-   */
   public getEntityValue(entity: Entity): number {
     return this.simulation?.getEntityValueForDay(entity.id, this.todayDay) ?? 0;
   }
 
-  /**
-   * Get the designated display value for an entity.
-   */
   public getEntityDisplayValue(entityId: string): number {
     const entity = this.entities.find((e) => e.id === entityId);
     if (!entity) return 0;

@@ -8,9 +8,6 @@ interface AccountEntityInput extends EntityInput {
   growthRate: number;
 }
 
-/**
- * Represents an account entity (checking, savings, etc.) with interest growth.
- */
 export class AccountEntity extends Entity {
   public readonly growthRate: number;
 
@@ -64,7 +61,6 @@ export class AccountEntity extends Entity {
     const lastDaysOfMonths = getLastDaysOfMonthsInRange(effectiveStartDay, endDay);
     days.push(...lastDaysOfMonths);
 
-    // Deduplicate and sort
     return Array.from(new Set(days)).sort((a, b) => a - b);
   }
 

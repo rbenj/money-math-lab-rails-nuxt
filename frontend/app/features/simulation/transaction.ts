@@ -27,9 +27,6 @@ export class Transaction {
     this.isCorrection = input.isCorrection ?? false;
   }
 
-  /**
-   * Create a copy with updated values.
-   */
   public copy(updates: Partial<TransactionInput>): Transaction {
     return new Transaction({ ...this, ...updates });
   }

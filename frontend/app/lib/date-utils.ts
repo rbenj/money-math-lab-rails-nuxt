@@ -1,8 +1,5 @@
 import { DEFAULT_BIRTH_MONTH, DEFAULT_BIRTH_YEAR } from "@/constants";
 
-/**
- * Creates a normalized GMT/UTC date representing a single day at the start or end of that day.
- */
 export function createUTCDayDate(
   year: number,
   month: number,
@@ -15,62 +12,38 @@ export function createUTCDayDate(
   return new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
 }
 
-/**
- * Creates an epoch day for a given date.
- */
 export function createEpochDay(year: number, month: number, day: number): number {
   return dateToEpochDay(createUTCDayDate(year, month, day));
 }
 
-/**
- * Convert a UTC date to the number of days since Unix epoch.
- */
 export function dateToEpochDay(date: Date): number {
   const utcMidnight = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
 
   return Math.floor(utcMidnight / 86400000);
 }
 
-/**
- * Convert a number of days since Unix epoch to a UTC date.
- */
 export function epochDayToDate(day: number): Date {
   const epochStart = Date.UTC(1970, 0, 1);
   return new Date(epochStart + day * 86400000);
 }
 
-/**
- * Convert epoch day (days since Unix epoch) to YYYY-MM-DD string.
- */
 export function epochDayToDateString(epochDay: number): string {
   return formatDateString(epochDayToDate(epochDay));
 }
 
-/**
- * Parse a YYYY-MM-DD string to epoch day.
- */
 export function dateStringToEpochDay(dateString: string): number {
   const { year, month, day } = parseDateString(dateString);
   return createEpochDay(year, month, day);
 }
 
-/**
- * Get today as epoch day.
- */
 export function getTodayEpochDay(): number {
   return dateToEpochDay(new Date());
 }
 
-/**
- * Get today's date as YYYY-MM-DD string.
- */
 export function getTodayDateString(): string {
   return formatDateString(new Date());
 }
 
-/**
- * Format a Date object as YYYY-MM-DD string (UTC).
- */
 export function formatDateString(date: Date): string {
   const year = date.getUTCFullYear();
   const month = String(date.getUTCMonth() + 1).padStart(2, "0");
@@ -78,9 +51,6 @@ export function formatDateString(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-/**
- * Get all last days of months within a date range (inclusive).
- */
 export function getLastDaysOfMonthsInRange(startDay: number, endDay: number): number[] {
   const days: number[] = [];
 
@@ -105,17 +75,11 @@ export function getLastDaysOfMonthsInRange(startDay: number, endDay: number): nu
   return days;
 }
 
-/**
- * Parse a YYYY-MM-DD string into year, month, day parts.
- */
 export function parseDateString(dateStr: string): { year: number; month: number; day: number } {
   const [year, month, day] = dateStr.split("-").map(Number);
   return { year: year || 1970, month: month || 1, day: day || 1 };
 }
 
-/**
- * Convert month and year to an ISO date string (15th of month).
- */
 export function monthYearToDateString(month: number, year: number): string {
   if (month < 1 || month > 12 || year < 1900 || year > 2100) {
     return "";
@@ -123,9 +87,6 @@ export function monthYearToDateString(month: number, year: number): string {
   return formatDateString(createUTCDayDate(year, month, 15));
 }
 
-/**
- * Convert an ISO date string to birth month and year.
- */
 export function birthDateStringToMonthYear(dateStr: string | null | undefined): {
   month: number;
   year: number;
@@ -137,9 +98,6 @@ export function birthDateStringToMonthYear(dateStr: string | null | undefined): 
   return { month, year };
 }
 
-/**
- * Calculate age from birth date string (YYYY-MM-DD), optionally specify today for deterministic result.
- */
 export function calculateAge(birthDate: string | null | undefined, todayEpochDay?: number): number {
   const today = todayEpochDay !== undefined ? epochDayToDate(todayEpochDay) : new Date();
   const todayYear = today.getUTCFullYear();

@@ -21,16 +21,10 @@ export class Snapshot {
     this.sharePrice = input.sharePrice ?? 0;
   }
 
-  /**
-   * The interpreted value of the snapshot.
-   */
   public get value(): number {
     return this.amount === 0 ? this.shareQuantity * this.sharePrice : this.amount;
   }
 
-  /**
-   * Create a copy with updated values.
-   */
   public copy(updates: Partial<SnapshotInput>): Snapshot {
     return new Snapshot({ ...this, ...updates });
   }

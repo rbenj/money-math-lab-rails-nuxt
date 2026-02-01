@@ -9,9 +9,6 @@ interface HoldingEntityInput extends EntityInput {
   growthRate: number;
 }
 
-/**
- * Represents a holding entity (stock, ETF, etc.) with price growth.
- */
 export class HoldingEntity extends Entity {
   public readonly symbol: string;
   public readonly growthRate: number;
@@ -69,7 +66,6 @@ export class HoldingEntity extends Entity {
     const lastDaysOfMonths = getLastDaysOfMonthsInRange(effectiveStartDay, endDay);
     days.push(...lastDaysOfMonths);
 
-    // Deduplicate and sort
     return Array.from(new Set(days)).sort((a, b) => a - b);
   }
 

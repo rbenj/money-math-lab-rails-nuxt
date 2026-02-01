@@ -23,9 +23,6 @@ export class DebtEntity extends Entity {
   public readonly paymentSchedule: Schedule;
   public readonly paymentSourceEntityId: string;
 
-  /**
-   * Create a DebtEntity from serialized data.
-   */
   public static fromSerialized(data: SerializedEntity): DebtEntity {
     const paymentScheduleData = data.data.paymentSchedule as SerializedSchedule | undefined;
     return new DebtEntity({
@@ -100,7 +97,6 @@ export class DebtEntity extends Entity {
       .map((date) => dateToEpochDay(date));
     days.push(...scheduleDays);
 
-    // Deduplicate and sort
     return Array.from(new Set(days)).sort((a, b) => a - b);
   }
 

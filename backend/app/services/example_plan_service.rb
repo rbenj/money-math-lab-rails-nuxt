@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# Service to populate a plan with demo entities from YAML
 class ExamplePlanService
   YAML_PATH = Rails.root.join("config/example_plan_data.yml")
 
@@ -43,7 +42,6 @@ class ExamplePlanService
       data = entity.data&.dup || {}
       needs_update = false
 
-      # Update temp id references with actual ids
       if data["temp_parent_id"]
         real_parent_id = @entity_id_map[data["temp_parent_id"]]
         if real_parent_id

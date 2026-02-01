@@ -21,25 +21,16 @@ function makeRailsPayload(data: SerializedEntity) {
 export function useEntityApi() {
   const { post, put, del } = useApi();
 
-  /**
-   * Create a new entity. Returns serialized entity that was created.
-   */
   async function createEntity(planId: string, data: SerializedEntity): Promise<SerializedEntity> {
     return await post<SerializedEntity>(`/plans/${planId}/entities`, {
       entity: makeRailsPayload(data),
     });
   }
 
-  /**
-   * Update an existing entity. Returns serialized entity with updated values.
-   */
   async function updateEntity(entityId: string, data: SerializedEntity): Promise<SerializedEntity> {
     return await put<SerializedEntity>(`/entities/${entityId}`, { entity: makeRailsPayload(data) });
   }
 
-  /**
-   * Delete an entity.
-   */
   async function deleteEntity(entityId: string): Promise<void> {
     return await del(`/entities/${entityId}`);
   }

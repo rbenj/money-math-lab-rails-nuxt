@@ -27,6 +27,9 @@ export interface SerializedSchedule {
   endDate?: string; // YYYY-MM-DD
 }
 
+/**
+ * A schedule for a recurring event.
+ */
 export class Schedule {
   public readonly type: ScheduleType;
   public readonly daysOfMonth?: number[];
@@ -35,9 +38,6 @@ export class Schedule {
   public readonly startDate: Date;
   public readonly endDate?: Date;
 
-  /**
-   * Create a Schedule from serialized data.
-   */
   public static fromSerialized(data: SerializedSchedule): Schedule {
     const typeStr = (data.type?.toLowerCase() ?? "monthly") as ScheduleType;
     const start = parseDateString(data.startDate);
@@ -53,9 +53,6 @@ export class Schedule {
     });
   }
 
-  /**
-   * Constructor.
-   */
   public constructor(input: ScheduleInput) {
     if (input.type === ScheduleType.Monthly && !input.daysOfMonth) {
       throw new Error("Days of month are required for monthly schedule");
@@ -101,9 +98,6 @@ export class Schedule {
     this.endDate = input.endDate;
   }
 
-  /**
-   * Convert to serialized data.
-   */
   public toSerialized(): SerializedSchedule {
     return {
       type: this.type,
@@ -115,9 +109,6 @@ export class Schedule {
     };
   }
 
-  /**
-   * Get dates in range.
-   */
   public getDatesInRange(startDate: Date, endDate: Date): Date[] {
     const dates: Date[] = [];
     const effectiveStart = this.startDate > startDate ? this.startDate : startDate;

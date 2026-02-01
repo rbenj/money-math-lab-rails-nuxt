@@ -10,9 +10,6 @@ interface IncomeEntityInput extends EntityInput {
   targetEntityId: string;
 }
 
-/**
- * Represents an income entity (job, rental income, etc.) with scheduled payments.
- */
 export class IncomeEntity extends Entity {
   public readonly growthRate: number;
   public readonly schedule: Schedule;
@@ -77,7 +74,6 @@ export class IncomeEntity extends Entity {
     const scheduleDays = scheduleDates.map((date) => dateToEpochDay(date));
     days.push(...scheduleDays);
 
-    // Deduplicate and sort
     return Array.from(new Set(days)).sort((a, b) => a - b);
   }
 

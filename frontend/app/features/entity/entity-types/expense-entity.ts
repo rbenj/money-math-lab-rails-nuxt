@@ -15,9 +15,6 @@ export class ExpenseEntity extends Entity {
   public readonly schedule: Schedule;
   public readonly sourceEntityId: string;
 
-  /**
-   * Create an ExpenseEntity from serialized data.
-   */
   public static fromSerialized(data: SerializedEntity): ExpenseEntity {
     const scheduleData = data.data.schedule as SerializedSchedule | undefined;
     return new ExpenseEntity({
@@ -77,7 +74,6 @@ export class ExpenseEntity extends Entity {
     const scheduleDays = scheduleDates.map((date) => dateToEpochDay(date));
     days.push(...scheduleDays);
 
-    // Deduplicate and sort
     return Array.from(new Set(days)).sort((a, b) => a - b);
   }
 

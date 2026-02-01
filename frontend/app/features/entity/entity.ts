@@ -38,14 +38,8 @@ export abstract class Entity {
     this.ledger = input.ledger || [];
   }
 
-  /**
-   * Convert to serialized data, subclasses must handle type-specific data.
-   */
   public abstract toSerialized(): SerializedEntity;
 
-  /**
-   * Get base serialized fields for subclasses to use in their serialization.
-   */
   public getSerializedBase(type: EntityType): Omit<SerializedEntity, "data"> {
     return {
       id: this.id,
@@ -57,9 +51,6 @@ export abstract class Entity {
     };
   }
 
-  /**
-   * Get the earliest day from the ledger.
-   */
   public getEarliestDay(): number {
     return this.ledger[0]?.day ?? 0;
   }
