@@ -17,10 +17,10 @@ Financial simulation app built with Rails API + Nuxt 4 frontend. Port of the Nex
 2. When prompted, click "Reopen in Container" (or run the DevContainer command)
 3. Wait, will take a few minutes (watch output in terminal)...
 4. Once container is running, terminal will prompt to press any key to continue
-5. Start the front and backend servers using foreman:
+5. Start the servers (may need to re-open a terminal window):
 
 ```bash
-   foreman start -f Procfile.dev
+foreman start -f Procfile.prod
 ```
 
 6. Open http://localhost:3000
@@ -44,3 +44,5 @@ Monorepo with Rails backend and Nuxt frontend.
 Alpha-level software. Models are being finalized, features are missing, bugs exist. Entity editing forms currently expose raw data structure.
 
 **Authentication:** Uses simplified session-based auth for demo purposes. Production version at moneymathlab.com uses Supabase Auth.
+
+You can run in dev mode with hot reload by running `foreman start -f Procfile.dev` (there are some known redirection issues when HMR is enabled).

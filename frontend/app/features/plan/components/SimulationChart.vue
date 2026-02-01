@@ -2,7 +2,9 @@
 import { Chart } from "vue-chartjs";
 import {
   Chart as ChartJS,
+  BarController,
   BarElement,
+  LineController,
   LineElement,
   PointElement,
   LinearScale,
@@ -16,7 +18,9 @@ import { formatAbbreviatedDisplayMoney, formatDisplayMoney } from "@/lib/money-u
 import type { Plan } from "@/features/plan/plan";
 
 ChartJS.register(
+  BarController,
   BarElement,
+  LineController,
   LineElement,
   PointElement,
   LinearScale,

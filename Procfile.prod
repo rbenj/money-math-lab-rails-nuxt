@@ -1,0 +1,2 @@
+rails: cd backend && bin/rails server -p 3001
+nuxt: cd frontend && npm run build && npm run preview -- --port 3000
