@@ -125,12 +125,6 @@ function updateField<K extends keyof EntityFormData>(field: K, value: EntityForm
   (formData.value as Record<string, unknown>)[field] = value;
 }
 
-function updateGrowthRate(rate: number) {
-  if ("growthRate" in formData.value) {
-    formData.value.growthRate = rate;
-  }
-}
-
 function updateSchedule(schedule: ScheduleFormData) {
   if (formData.value.type === EntityType.Expense || formData.value.type === EntityType.Income) {
     formData.value.schedule = schedule;
@@ -146,11 +140,18 @@ const hasGrowthRate = computed(
     formData.value.type === EntityType.Expense,
 );
 
-const growthRateValue = computed(() => {
+const growthRateDisplay = computed(() => {
   if ("growthRate" in formData.value) {
-    return formData.value.growthRate;
+    return String(formData.value.growthRate * 100);
   }
-  return 0;
+  return "0";
+});
+
+const interestRateDisplay = computed(() => {
+  if ("interestRate" in formData.value) {
+    return String(formData.value.interestRate * 100);
+  }
+  return "0";
 });
 </script>
 
@@ -246,13 +247,21 @@ const growthRateValue = computed(() => {
         <!-- Growth rate -->
         <div v-if="hasGrowthRate" class="space-y-2">
           <Label for="growthRate">Growth Rate (%)</Label>
-          <Input
+          <input
             id="growthRate"
             type="number"
             step="0.1"
-            :model-value="String((growthRateValue * 100).toFixed(2))"
+            class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            :value="growthRateDisplay"
             placeholder="3"
-            @update:model-value="updateGrowthRate((parseFloat($event as string) || 0) / 100)"
+            @change="
+              (e: Event) => {
+                if ('growthRate' in formData) {
+                  formData.growthRate =
+                    (parseFloat((e.target as HTMLInputElement).value) || 0) / 100;
+                }
+              }
+            "
           />
         </div>
 
@@ -261,14 +270,20 @@ const growthRateValue = computed(() => {
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
               <Label for="interestRate">Interest Rate (%)</Label>
-              <Input
+              <input
                 id="interestRate"
                 type="number"
                 step="0.1"
-                :model-value="String((formData.interestRate * 100).toFixed(2))"
+                class="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                :value="interestRateDisplay"
                 placeholder="6.5"
-                @update:model-value="
-                  formData.interestRate = (parseFloat($event as string) || 0) / 100
+                @change="
+                  (e: Event) => {
+                    if ('interestRate' in formData) {
+                      formData.interestRate =
+                        (parseFloat((e.target as HTMLInputElement).value) || 0) / 100;
+                    }
+                  }
                 "
               />
             </div>
