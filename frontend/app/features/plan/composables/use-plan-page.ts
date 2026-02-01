@@ -5,13 +5,32 @@ import type { SerializedPlanSummary } from "../types";
 import { Plan } from "../plan";
 import { usePlanApi } from "./use-plan-api";
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export async function usePlanPage(planId: string) {
   const planApi = usePlanApi();
 
   // Single source of truth for today epoch day to avoid hydration mismatches
   const todayEpochDay = getTodayEpochDay();
 
-  const { data: planData } = await useAsyncData(`plan-${planId}`, () => planApi.fetchPlan(planId));
+  const {
+    data: planData,
+    error: planError,
+    refresh: refreshPlan,
+  } = await useAsyncData(`plan-${planId}`, () => planApi.fetchPlan(planId));
+
+  // Retry with backoff on error (super rare, but had race condition on first load of new account sometimes)
+  // TODO: Address the root cause, but gotta find it first.
+  const retryDelays = [100, 250, 500];
+
+  for (
+    let attempt = 0;
+    attempt < retryDelays.length && planError.value && !planData.value;
+    attempt++
+  ) {
+    await sleep(retryDelays[attempt]!);
+    await refreshPlan();
+  }
 
   if (!planData.value) {
     throw createError({ statusCode: 404, message: "Plan not found" });

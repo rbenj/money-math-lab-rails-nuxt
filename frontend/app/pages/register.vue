@@ -24,7 +24,7 @@ async function handleRegister() {
 
   try {
     await register(email.value, password.value, passwordConfirmation.value, name.value);
-    await navigateTo("/plans");
+    await navigateTo("/plans", { replace: true, external: false });
   } catch (e) {
     error.value = e instanceof Error ? e.message : "An error occurred";
   } finally {

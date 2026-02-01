@@ -1,5 +1,9 @@
 import type { User } from "@/features/user/types";
 
+/**
+ * Simple and temporary auth system for local demo only.
+ * TODO: Replace with Supabase auth, already present in Next.js version.
+ */
 export function useAuth() {
   const user = useState<User | null>("user", () => null);
   const { get, post, del } = useApi();
@@ -13,7 +17,13 @@ export function useAuth() {
   }
 
   async function login(email: string, password: string) {
-    user.value = await post<User>("/login", { email, password });
+    const loggedInUser = await post<User>("/login", { email, password });
+
+    try {
+      user.value = await get<User>("/me");
+    } catch {
+      user.value = loggedInUser;
+    }
   }
 
   async function register(
@@ -22,7 +32,7 @@ export function useAuth() {
     passwordConfirmation: string,
     name: string,
   ) {
-    user.value = await post<User>("/register", {
+    const registeredUser = await post<User>("/register", {
       user: {
         email,
         password,
@@ -30,6 +40,12 @@ export function useAuth() {
         name,
       },
     });
+
+    try {
+      user.value = await get<User>("/me");
+    } catch {
+      user.value = registeredUser;
+    }
   }
 
   async function logout() {
