@@ -145,6 +145,7 @@ function onPlanUpdated(summary: SerializedPlanSummary) {
     <PlanFormModal
       :open="isSettingsOpen"
       :plan-id="planId"
+      :initial-data="plan.toSerialized()"
       title="Plan Settings"
       submit-label="Save Changes"
       @close="isSettingsOpen = false"

@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { Loader2 } from "lucide-vue-next";
 import {
   MONTHS,
   BIRTH_YEARS,
   DEFAULT_BIRTH_MONTH,
   DEFAULT_BIRTH_YEAR,
   DEFAULT_RETIREMENT_AGE,
+  SLOW_LOADING_DELAY,
 } from "@/constants";
 import { birthDateStringToMonthYear } from "@/lib/date-utils";
 import type { SerializedPlanSummary } from "../types";
@@ -48,6 +50,20 @@ function getInitialFormValues() {
 const formData = ref(getInitialFormValues());
 const useExampleData = ref(true);
 
+const showSpinner = ref(false);
+let spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
+
+watch(isSubmitting, (submitting) => {
+  if (submitting) {
+    spinnerTimeout = setTimeout(() => {
+      showSpinner.value = true;
+    }, SLOW_LOADING_DELAY);
+  } else {
+    if (spinnerTimeout) clearTimeout(spinnerTimeout);
+    showSpinner.value = false;
+  }
+});
+
 const isDisabled = computed(() => {
   return !formData.value.name.trim() || isSubmitting.value;
 });
@@ -79,7 +95,11 @@ function handleClose() {
         </DialogDescription>
       </DialogHeader>
 
-      <form class="space-y-6" @submit.prevent="handleSubmit">
+      <form
+        class="space-y-6 transition-opacity"
+        :class="{ 'pointer-events-none opacity-50': isSubmitting }"
+        @submit.prevent="handleSubmit"
+      >
         <div class="space-y-2">
           <Label for="name">Plan Name</Label>
           <Input id="name" v-model="formData.name" required />
@@ -158,8 +178,11 @@ function handleClose() {
         </div>
 
         <DialogFooter>
-          <Button type="button" variant="outline" @click="handleClose"> Cancel </Button>
+          <Button type="button" variant="outline" :disabled="isSubmitting" @click="handleClose">
+            Cancel
+          </Button>
           <Button type="submit" :disabled="isDisabled">
+            <Loader2 v-if="showSpinner" class="mr-2 animate-spin" />
             {{ submitLabel }}
           </Button>
         </DialogFooter>

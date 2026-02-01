@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Loader2 } from "lucide-vue-next";
+import { SLOW_LOADING_DELAY } from "@/constants";
 import { type EntityFormData, type ScheduleFormData, EntityType } from "../types";
 import type { Entity } from "../entity";
 import { entityToFormData, getDefaultFormData } from "../form-helpers";
@@ -73,6 +75,20 @@ watch(
 );
 
 const isEditing = computed(() => !!props.entityId);
+
+const showSpinner = ref(false);
+let spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
+
+watch(isSubmitting, (submitting) => {
+  if (submitting) {
+    spinnerTimeout = setTimeout(() => {
+      showSpinner.value = true;
+    }, SLOW_LOADING_DELAY);
+  } else {
+    if (spinnerTimeout) clearTimeout(spinnerTimeout);
+    showSpinner.value = false;
+  }
+});
 
 const availableTemplates = computed(() =>
   getTemplatesForEntityType(formData.value.type).map((t) => ({ key: t.key, name: t.name })),
@@ -149,7 +165,11 @@ const growthRateValue = computed(() => {
         </DialogDescription>
       </DialogHeader>
 
-      <form class="space-y-4" @submit.prevent="handleSubmit">
+      <form
+        class="space-y-4 transition-opacity"
+        :class="{ 'pointer-events-none opacity-50': isSubmitting }"
+        @submit.prevent="handleSubmit"
+      >
         <!-- Entity type -->
         <div v-if="!isEditing" class="space-y-2">
           <Label for="type">Type</Label>
@@ -371,9 +391,9 @@ const growthRateValue = computed(() => {
           <Button type="button" variant="outline" :disabled="isSubmitting" @click="handleClose">
             Cancel
           </Button>
-
           <Button type="submit" :disabled="isSubmitting">
-            {{ isSubmitting ? "Saving..." : isEditing ? "Update" : "Create" }}
+            <Loader2 v-if="showSpinner" class="mr-2 animate-spin" />
+            {{ isEditing ? "Update" : "Create" }}
           </Button>
         </DialogFooter>
       </form>

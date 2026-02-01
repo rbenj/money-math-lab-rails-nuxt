@@ -8,6 +8,8 @@ import { Simulation, type DataPointsByDay } from "@/features/simulation/simulati
 import type { SerializedPlan, SerializedPlanSummary } from "./types";
 
 export const YEARS_PAST_RETIREMENT = 15;
+export const MAX_PROJECTION_AGE = 120;
+export const TARGET_PROJECTION_YEARS = 50;
 
 export interface PlanInput {
   id: string;
@@ -78,7 +80,9 @@ export class Plan {
     const entities = [new FallbackEntity(), ...this.entities];
 
     const currentAge = calculateAge(this.birthDate, this.todayDay);
-    const targetAge = this.retirementAge + YEARS_PAST_RETIREMENT;
+    const minTargetAge = this.retirementAge + YEARS_PAST_RETIREMENT;
+    const desiredTargetAge = currentAge + TARGET_PROJECTION_YEARS;
+    const targetAge = Math.min(MAX_PROJECTION_AGE, Math.max(minTargetAge, desiredTargetAge));
     const projectionYears = Math.max(1, targetAge - currentAge);
 
     this.simulation = new Simulation(entities, projectionYears, this.todayDay);
