@@ -32,6 +32,13 @@ Financial simulation app built with Rails API + Nuxt 4 frontend. Port of the Nex
 3. **Recommended:** Use default values for your first plan - just enter a name
 4. Explore the plan page and experiment with entities and mute/solo buttons
 
+## Project Structure
+
+Monorepo with Rails backend and Nuxt frontend.
+
+- `backend/`: Database schema, RESTful API, demo data seeding
+- `frontend/`: UI, financial simulation engine, entity management
+
 ## Development Notes
 
 Alpha-level software. Models are being finalized, features are missing, bugs exist. Entity editing forms currently expose raw data structure.
