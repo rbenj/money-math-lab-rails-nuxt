@@ -40,7 +40,7 @@ async function handleRegister() {
         <CardHeader>
           <CardTitle class="text-2xl">Create Account</CardTitle>
 
-          <CardDescription> Enter your details to create a new account </CardDescription>
+          <CardDescription>Enter your details to create a new account</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -86,7 +86,7 @@ async function handleRegister() {
 
             <div class="mt-4 text-center text-sm">
               Already have an account?
-              <NuxtLink to="/login" class="underline underline-offset-4"> Login </NuxtLink>
+              <NuxtLink to="/login" class="underline underline-offset-4">Login</NuxtLink>
             </div>
           </form>
         </CardContent>

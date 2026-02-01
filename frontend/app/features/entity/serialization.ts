@@ -7,9 +7,6 @@ import { HoldingEntity } from "./entity-types/holding-entity";
 import { IncomeEntity } from "./entity-types/income-entity";
 import { PossessionEntity } from "./entity-types/possession-entity";
 
-/**
- * Create an entity fo the proper type from serialized data.
- */
 export function deserializeEntity(data: SerializedEntity): Entity {
   const type = data.type.toLowerCase();
 
@@ -31,9 +28,6 @@ export function deserializeEntity(data: SerializedEntity): Entity {
   }
 }
 
-/**
- * Deserialize multiple entities.
- */
 export function deserializeEntities(data: SerializedEntity[]): Entity[] {
   return data.map((d) => deserializeEntity(d));
 }

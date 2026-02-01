@@ -13,9 +13,6 @@ import {
   EntityType,
 } from "./types";
 
-/**
- * Convert Schedule class to ScheduleFormData.
- */
 function scheduleToFormData(schedule: DebtEntity["paymentSchedule"]): ScheduleFormData {
   return {
     type: schedule.type,
@@ -27,9 +24,6 @@ function scheduleToFormData(schedule: DebtEntity["paymentSchedule"]): ScheduleFo
   };
 }
 
-/**
- * Get default form data for a new entity of the given type.
- */
 export function getDefaultFormData(type: EntityType): EntityFormData {
   const todayString = getTodayDateString();
 
@@ -112,9 +106,6 @@ export function getDefaultFormData(type: EntityType): EntityFormData {
   }
 }
 
-/**
- * Convert an Entity instance to form data.
- */
 export function entityToFormData(entity: Entity): EntityFormData {
   const ledgerEntries: LedgerEntryFormData[] = entity.ledger.map((entry) => ({
     id: entry.id,

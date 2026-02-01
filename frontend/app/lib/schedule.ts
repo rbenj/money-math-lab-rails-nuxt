@@ -27,9 +27,6 @@ export interface SerializedSchedule {
   endDate?: string; // YYYY-MM-DD
 }
 
-/**
- * A schedule for a recurring event.
- */
 export class Schedule {
   public readonly type: ScheduleType;
   public readonly daysOfMonth?: number[];

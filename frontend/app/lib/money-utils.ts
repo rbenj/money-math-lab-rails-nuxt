@@ -1,6 +1,3 @@
-/**
- * Format money for display.
- */
 export function formatDisplayMoney(value: number, includeCents: boolean = false): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -10,9 +7,6 @@ export function formatDisplayMoney(value: number, includeCents: boolean = false)
   }).format(value);
 }
 
-/**
- * Format money for abbreviated display.
- */
 export function formatAbbreviatedDisplayMoney(value: number, roundUntil: number = 1000000): string {
   const absValue = Math.abs(value);
 

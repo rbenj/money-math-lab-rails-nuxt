@@ -7,7 +7,7 @@ const currentYear = new Date().getFullYear();
 <template>
   <main class="flex min-h-screen flex-col">
     <div class="flex w-full flex-1 flex-col">
-      <!-- Nav -->
+      <!-- Head -->
       <nav class="bg-background sticky top-0 z-50 h-20 w-full">
         <div class="flex w-full items-center justify-between px-6 py-3">
           <Logo />
@@ -27,7 +27,7 @@ const currentYear = new Date().getFullYear();
         <slot />
       </div>
 
-      <!-- Footer -->
+      <!-- Foot -->
       <footer class="text-muted-foreground flex w-full items-center justify-between p-6 text-xs">
         <div>&copy; {{ currentYear }} All Rights Reserved</div>
 
