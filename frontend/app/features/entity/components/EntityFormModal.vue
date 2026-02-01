@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Loader2 } from "lucide-vue-next";
-import { SLOW_LOADING_DELAY } from "@/constants";
+import { RATE_PRECISION, SLOW_LOADING_DELAY } from "@/constants";
 import { type EntityFormData, type ScheduleFormData, EntityType } from "../types";
 import type { Entity } from "../entity";
 import { entityToFormData, getDefaultFormData } from "../form-helpers";
@@ -140,16 +140,19 @@ const hasGrowthRate = computed(
     formData.value.type === EntityType.Expense,
 );
 
+const roundRate = (rate: number, decimals: number) =>
+  Math.round(rate * Math.pow(10, decimals)) / Math.pow(10, decimals);
+
 const growthRateDisplay = computed(() => {
   if ("growthRate" in formData.value) {
-    return String(formData.value.growthRate * 100);
+    return String(roundRate(formData.value.growthRate * 100, RATE_PRECISION));
   }
   return "0";
 });
 
 const interestRateDisplay = computed(() => {
   if ("interestRate" in formData.value) {
-    return String(formData.value.interestRate * 100);
+    return String(roundRate(formData.value.interestRate * 100, RATE_PRECISION));
   }
   return "0";
 });
@@ -257,8 +260,10 @@ const interestRateDisplay = computed(() => {
             @change="
               (e: Event) => {
                 if ('growthRate' in formData) {
-                  formData.growthRate =
-                    (parseFloat((e.target as HTMLInputElement).value) || 0) / 100;
+                  formData.growthRate = roundRate(
+                    (parseFloat((e.target as HTMLInputElement).value) || 0) / 100,
+                    RATE_PRECISION + 2,
+                  );
                 }
               }
             "
@@ -280,8 +285,10 @@ const interestRateDisplay = computed(() => {
                 @change="
                   (e: Event) => {
                     if ('interestRate' in formData) {
-                      formData.interestRate =
-                        (parseFloat((e.target as HTMLInputElement).value) || 0) / 100;
+                      formData.interestRate = roundRate(
+                        (parseFloat((e.target as HTMLInputElement).value) || 0) / 100,
+                        RATE_PRECISION + 2,
+                      );
                     }
                   }
                 "

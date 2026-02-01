@@ -3,6 +3,7 @@ export const DEFAULT_BIRTH_DAY = 1;
 export const DEFAULT_BIRTH_MONTH = 1;
 export const DEFAULT_BIRTH_YEAR = 1990;
 export const DEFAULT_RETIREMENT_AGE = 65;
+export const RATE_PRECISION = 2;
 export const SLOW_LOADING_DELAY = 600;
 
 export const DEFAULT_BIRTH_DATE = `${DEFAULT_BIRTH_YEAR}-${DEFAULT_BIRTH_MONTH}-${DEFAULT_BIRTH_DAY}`;
