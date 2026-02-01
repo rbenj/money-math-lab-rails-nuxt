@@ -1,11 +1,11 @@
-export default defineNuxtRouteMiddleware(async () => {
+export default defineNuxtRouteMiddleware(async (to) => {
   const { user, fetchUser } = useAuth();
 
-  if (user.value === null) {
+  if (!user.value) {
     await fetchUser();
   }
 
   if (!user.value) {
-    return navigateTo("/login");
+    return navigateTo(`/login?redirect=${encodeURIComponent(to.fullPath)}`);
   }
 });

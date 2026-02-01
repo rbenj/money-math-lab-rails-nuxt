@@ -1,13 +1,11 @@
 <script setup lang="ts">
 const { user, fetchUser } = useAuth();
 
-await fetchUser();
-
-if (user.value) {
-  await navigateTo("/plans");
-} else {
-  await navigateTo("/login");
+if (!user.value) {
+  await fetchUser();
 }
+
+await navigateTo(user.value ? "/plans" : "/login", { replace: true });
 </script>
 
 <template>

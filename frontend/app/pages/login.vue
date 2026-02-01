@@ -3,6 +3,7 @@ definePageMeta({
   layout: false,
 });
 
+const route = useRoute();
 const { login } = useAuth();
 
 const email = ref("");
@@ -10,13 +11,19 @@ const password = ref("");
 const error = ref<string | null>(null);
 const isLoading = ref(false);
 
+// Get redirect destination from query param (set by auth middleware)
+const redirectTo = computed(() => {
+  const redirect = route.query.redirect;
+  return typeof redirect === "string" ? redirect : "/plans";
+});
+
 async function handleLogin() {
   isLoading.value = true;
   error.value = null;
 
   try {
     await login(email.value, password.value);
-    await navigateTo("/plans");
+    await navigateTo(redirectTo.value, { replace: true });
   } catch (e) {
     error.value = e instanceof Error ? e.message : "An error occurred";
   } finally {

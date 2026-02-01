@@ -17,15 +17,17 @@ export async function usePlanPage(planId: string) {
     data: planData,
     error: planError,
     refresh: refreshPlan,
-  } = await useAsyncData(`plan-${planId}`, () => planApi.fetchPlan(planId));
+  } = await useAsyncData(`plan-${planId}`, () => planApi.fetchPlan(planId), {
+    // Dedupe concurrent requests to mitigate Vite HMR/reload race condition
+    dedupe: "defer",
+  });
 
-  // Retry with backoff on error (super rare, but had race condition on first load of new account sometimes)
-  // TODO: Address the root cause, but gotta find it first.
-  const retryDelays = [100, 250, 500];
+  // Retry with backoff on error (extra measure to ensure demo works after Vite is first initialized)
+  const retryDelays = [150, 300, 600];
 
   for (
     let attempt = 0;
-    attempt < retryDelays.length && planError.value && !planData.value;
+    attempt < retryDelays.length && (planError.value || !planData.value);
     attempt++
   ) {
     await sleep(retryDelays[attempt]!);

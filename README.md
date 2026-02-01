@@ -15,8 +15,8 @@ Financial simulation app built with Rails API + Nuxt 4 frontend. Port of the Nex
 
 1. Open project in your IDE
 2. When prompted, click "Reopen in Container" (or run the DevContainer command)
-3. Wait, will take a few minutes...
-4. Once container is running, it will prompt to press any key to continue
+3. Wait, will take a few minutes (watch output in terminal)...
+4. Once container is running, terminal will prompt to press any key to continue
 5. Start the front and backend servers using foreman:
 
 ```bash
