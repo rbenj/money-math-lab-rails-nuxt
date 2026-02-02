@@ -5,34 +5,13 @@ import type { SerializedPlanSummary } from "../types";
 import { Plan } from "../plan";
 import { usePlanApi } from "./use-plan-api";
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 export async function usePlanPage(planId: string) {
   const planApi = usePlanApi();
 
   // Single source of truth for today epoch day to avoid hydration mismatches
   const todayEpochDay = getTodayEpochDay();
 
-  const {
-    data: planData,
-    error: planError,
-    refresh: refreshPlan,
-  } = await useAsyncData(`plan-${planId}`, () => planApi.fetchPlan(planId), {
-    // Dedupe concurrent requests to mitigate Vite HMR/reload race condition
-    dedupe: "defer",
-  });
-
-  // Retry with backoff on error (extra measure to ensure demo works after Vite is first initialized)
-  const retryDelays = [150, 300, 600];
-
-  for (
-    let attempt = 0;
-    attempt < retryDelays.length && (planError.value || !planData.value);
-    attempt++
-  ) {
-    await sleep(retryDelays[attempt]!);
-    await refreshPlan();
-  }
+  const { data: planData } = await useAsyncData(`plan-${planId}`, () => planApi.fetchPlan(planId));
 
   if (!planData.value) {
     throw createError({ statusCode: 404, message: "Plan not found" });
@@ -122,8 +101,8 @@ export async function usePlanPage(planId: string) {
 
   function handleEntityDeleted(entityId: string) {
     entities.value = entities.value.filter((e) => e.id !== entityId);
-    mutedEntityIds.value.delete(entityId);
-    soloedEntityIds.value.delete(entityId);
+    mutedEntityIds.value = new Set([...mutedEntityIds.value].filter((id) => id !== entityId));
+    soloedEntityIds.value = new Set([...soloedEntityIds.value].filter((id) => id !== entityId));
   }
 
   return {

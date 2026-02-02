@@ -30,6 +30,7 @@ const editingEntity = ref<Entity | null>(null);
 const deletingEntity = ref<Entity | null>(null);
 const isCreateModalOpen = ref(false);
 const isDeleting = ref(false);
+const deleteErrorMessage = ref<string | null>(null);
 
 const displayEntities = computed(() => {
   const allEntities = props.plan.entities.filter((e) => !(e instanceof FallbackEntity));
@@ -69,16 +70,23 @@ function handleEntityUpdated(entity: Entity) {
 async function handleDelete() {
   if (!deletingEntity.value) return;
 
+  deleteErrorMessage.value = null;
   isDeleting.value = true;
   try {
     await entityApi.deleteEntity(deletingEntity.value.id);
     emit("entity-deleted", deletingEntity.value.id);
     deletingEntity.value = null;
-  } catch (error) {
-    console.error("Failed to delete entity", error);
+  } catch (e) {
+    deleteErrorMessage.value = "Failed to delete entity. Please try again.";
+    console.error("Failed to delete entity", e);
   } finally {
     isDeleting.value = false;
   }
+}
+
+function handleCancelDelete() {
+  deletingEntity.value = null;
+  deleteErrorMessage.value = null;
 }
 </script>
 
@@ -159,8 +167,12 @@ async function handleDelete() {
           </AlertDialogDescription>
         </AlertDialogHeader>
 
+        <div v-if="deleteErrorMessage" class="text-destructive text-sm" role="alert">
+          {{ deleteErrorMessage }}
+        </div>
+
         <AlertDialogFooter>
-          <AlertDialogCancel :disabled="isDeleting" @click="deletingEntity = null">
+          <AlertDialogCancel :disabled="isDeleting" @click="handleCancelDelete">
             Cancel
           </AlertDialogCancel>
 

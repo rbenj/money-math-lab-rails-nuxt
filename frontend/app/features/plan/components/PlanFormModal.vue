@@ -49,9 +49,10 @@ function getInitialFormValues() {
 
 const formData = ref(getInitialFormValues());
 const useExampleData = ref(true);
+const errorMessage = ref<string | null>(null);
 
 const showSpinner = ref(false);
-let spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
+let spinnerTimeout: ReturnType<typeof setTimeout> | undefined;
 
 watch(isSubmitting, (submitting) => {
   if (submitting) {
@@ -59,9 +60,13 @@ watch(isSubmitting, (submitting) => {
       showSpinner.value = true;
     }, SLOW_LOADING_DELAY);
   } else {
-    if (spinnerTimeout) clearTimeout(spinnerTimeout);
+    clearTimeout(spinnerTimeout);
     showSpinner.value = false;
   }
+});
+
+onUnmounted(() => {
+  clearTimeout(spinnerTimeout);
 });
 
 const isDisabled = computed(() => {
@@ -69,13 +74,15 @@ const isDisabled = computed(() => {
 });
 
 async function handleSubmit() {
+  errorMessage.value = null;
   try {
     const planSummary: SerializedPlanSummary = props.planId
       ? await updatePlan(props.planId, formData.value)
       : await createPlan(formData.value, useExampleData.value);
     emit("success", planSummary);
-  } catch (error) {
-    console.error("Failed to save plan", error);
+  } catch (e) {
+    errorMessage.value = "Failed to save plan. Please try again.";
+    console.error("Failed to save plan", e);
   }
 }
 
@@ -175,6 +182,10 @@ function handleClose() {
           <Label for="useExample" class="text-muted-foreground cursor-pointer text-sm">
             Populate with demo data
           </Label>
+        </div>
+
+        <div v-if="errorMessage" class="text-destructive text-sm" role="alert">
+          {{ errorMessage }}
         </div>
 
         <DialogFooter>

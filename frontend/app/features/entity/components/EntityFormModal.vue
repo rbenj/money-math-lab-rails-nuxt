@@ -75,9 +75,10 @@ watch(
 );
 
 const isEditing = computed(() => !!props.entityId);
+const errorMessage = ref<string | null>(null);
 
 const showSpinner = ref(false);
-let spinnerTimeout: ReturnType<typeof setTimeout> | null = null;
+let spinnerTimeout: ReturnType<typeof setTimeout> | undefined;
 
 watch(isSubmitting, (submitting) => {
   if (submitting) {
@@ -85,9 +86,13 @@ watch(isSubmitting, (submitting) => {
       showSpinner.value = true;
     }, SLOW_LOADING_DELAY);
   } else {
-    if (spinnerTimeout) clearTimeout(spinnerTimeout);
+    clearTimeout(spinnerTimeout);
     showSpinner.value = false;
   }
+});
+
+onUnmounted(() => {
+  clearTimeout(spinnerTimeout);
 });
 
 const availableTemplates = computed(() =>
@@ -107,13 +112,15 @@ function handleTypeChange(type: EntityType) {
 }
 
 async function handleSubmit() {
+  errorMessage.value = null;
   try {
     const entity = props.entityId
       ? await updateEntity(props.entityId, formData.value)
       : await createEntity(props.planId, formData.value);
     emit("success", entity);
-  } catch (error) {
-    console.error("Failed to save entity:", error);
+  } catch (e) {
+    errorMessage.value = "Failed to save entity. Please try again.";
+    console.error("Failed to save entity:", e);
   }
 }
 
@@ -408,6 +415,10 @@ const interestRateDisplay = computed(() => {
           :model-value="formData.ledgerEntries"
           @update:model-value="updateField('ledgerEntries', $event)"
         />
+
+        <div v-if="errorMessage" class="text-destructive text-sm" role="alert">
+          {{ errorMessage }}
+        </div>
 
         <DialogFooter>
           <Button type="button" variant="outline" :disabled="isSubmitting" @click="handleClose">

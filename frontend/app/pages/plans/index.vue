@@ -18,6 +18,7 @@ const editingPlan = ref<SerializedPlanSummary | null>(null);
 
 const deletingPlan = ref<SerializedPlanSummary | null>(null);
 const isDeleteLoading = ref(false);
+const deleteErrorMessage = ref<string | null>(null);
 
 function handlePlanCreated(plan: SerializedPlanSummary) {
   isCreateModalOpen.value = false;
@@ -32,16 +33,23 @@ async function handlePlanUpdated() {
 async function handleDeletePlan() {
   if (!deletingPlan.value) return;
 
+  deleteErrorMessage.value = null;
   isDeleteLoading.value = true;
   try {
     await planApi.deletePlan(deletingPlan.value.id);
     deletingPlan.value = null;
     await refresh();
-  } catch (error) {
-    console.error("Failed to delete plan:", error);
+  } catch (e) {
+    deleteErrorMessage.value = "Failed to delete plan. Please try again.";
+    console.error("Failed to delete plan:", e);
   } finally {
     isDeleteLoading.value = false;
   }
+}
+
+function handleCancelDelete() {
+  deletingPlan.value = null;
+  deleteErrorMessage.value = null;
 }
 </script>
 
@@ -141,8 +149,12 @@ async function handleDeletePlan() {
           </AlertDialogDescription>
         </AlertDialogHeader>
 
+        <div v-if="deleteErrorMessage" class="text-destructive text-sm" role="alert">
+          {{ deleteErrorMessage }}
+        </div>
+
         <AlertDialogFooter>
-          <AlertDialogCancel :disabled="isDeleteLoading" @click="deletingPlan = null">
+          <AlertDialogCancel :disabled="isDeleteLoading" @click="handleCancelDelete">
             Cancel
           </AlertDialogCancel>
 
