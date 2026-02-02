@@ -31,10 +31,12 @@ const props = withDefaults(
     initialEntity?: Entity;
     availableParents?: ParentEntityData[];
     availableAccounts?: AccountEntityData[];
+    hasChildren?: boolean;
   }>(),
   {
     availableParents: () => [],
     availableAccounts: () => [],
+    hasChildren: false,
   },
 );
 
@@ -97,6 +99,13 @@ onUnmounted(() => {
 
 const availableTemplates = computed(() =>
   getTemplatesForEntityType(formData.value.type).map((t) => ({ key: t.key, name: t.name })),
+);
+
+// Filter out self from available parents when editing
+const filteredAvailableParents = computed(() =>
+  props.entityId
+    ? props.availableParents.filter((p) => p.id !== props.entityId)
+    : props.availableParents,
 );
 
 function handleTypeChange(type: EntityType) {
@@ -233,8 +242,7 @@ const interestRateDisplay = computed(() => {
           />
         </div>
 
-        <!-- Parent -->
-        <div class="space-y-2">
+        <div v-if="!hasChildren" class="space-y-2">
           <Label for="parentId">Belongs to</Label>
           <Select
             :model-value="formData.parentId || '__none__'"
@@ -247,7 +255,11 @@ const interestRateDisplay = computed(() => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="__none__">None</SelectItem>
-              <SelectItem v-for="parent in availableParents" :key="parent.id" :value="parent.id">
+              <SelectItem
+                v-for="parent in filteredAvailableParents"
+                :key="parent.id"
+                :value="parent.id"
+              >
                 {{ parent.name }}
               </SelectItem>
             </SelectContent>

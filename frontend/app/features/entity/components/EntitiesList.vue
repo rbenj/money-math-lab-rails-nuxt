@@ -47,8 +47,11 @@ function formatDisplayValue(entityId: string): string {
   return value ? formatAbbreviatedDisplayMoney(value) : "";
 }
 
+// Children can't be parents
 const availableParents = computed(() =>
-  props.plan.entities.map((e) => ({ id: e.id, name: e.name })),
+  props.plan.entities
+    .filter((e) => !(e instanceof FallbackEntity) && !e.parentId)
+    .map((e) => ({ id: e.id, name: e.name })),
 );
 
 const availableAccounts = computed(() =>
@@ -56,6 +59,11 @@ const availableAccounts = computed(() =>
     .filter((e) => e instanceof AccountEntity)
     .map((e) => ({ id: e.id, name: e.name })),
 );
+
+const editingEntityHasChildren = computed(() => {
+  if (!editingEntity.value) return false;
+  return props.plan.entities.some((e) => e.parentId === editingEntity.value!.id);
+});
 
 function handleEntityCreated(entity: Entity) {
   emit("entity-created", entity);
@@ -153,6 +161,7 @@ function handleCancelDelete() {
       :initial-entity="editingEntity"
       :available-parents="availableParents"
       :available-accounts="availableAccounts"
+      :has-children="editingEntityHasChildren"
       @close="editingEntity = null"
       @success="handleEntityUpdated"
     />
