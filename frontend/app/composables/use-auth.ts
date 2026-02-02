@@ -1,28 +1,5 @@
+import { parseApiError } from "@/lib/error-utils";
 import type { User } from "@/features/user/types";
-
-interface ApiError {
-  error?: string;
-  errors?: Record<string, string[]>;
-}
-
-function parseAuthError(err: unknown): string {
-  if (err && typeof err === "object" && "data" in err) {
-    const data = (err as { data: ApiError }).data;
-
-    if (data?.error) {
-      return data.error;
-    }
-
-    if (data?.errors) {
-      const messages = Object.entries(data.errors)
-        .map(([field, msgs]) => `${field} ${(msgs as string[]).join(", ")}`)
-        .join("; ");
-      return messages || "Validation failed";
-    }
-  }
-
-  return "An error occurred. Please try again.";
-}
 
 /**
  * Simple and temporary auth system for local demo only.
@@ -50,7 +27,7 @@ export function useAuth() {
         user.value = loggedInUser;
       }
     } catch (err) {
-      throw new Error(parseAuthError(err));
+      throw new Error(parseApiError(err));
     }
   }
 
@@ -76,7 +53,7 @@ export function useAuth() {
         user.value = registeredUser;
       }
     } catch (err) {
-      throw new Error(parseAuthError(err));
+      throw new Error(parseApiError(err));
     }
   }
 

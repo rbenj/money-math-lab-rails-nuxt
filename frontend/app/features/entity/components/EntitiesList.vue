@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Plus } from "lucide-vue-next";
+import { parseApiError } from "@/lib/error-utils";
 import { formatAbbreviatedDisplayMoney } from "@/lib/money-utils";
 import type { Plan } from "@/features/plan/plan";
 import { sortEntities } from "@/features/entity/utils";
@@ -85,7 +86,7 @@ async function handleDelete() {
     emit("entity-deleted", deletingEntity.value.id);
     deletingEntity.value = null;
   } catch (e) {
-    deleteErrorMessage.value = "Failed to delete entity. Please try again.";
+    deleteErrorMessage.value = parseApiError(e, "Failed to delete entity. Please try again.");
     console.error("Failed to delete entity", e);
   } finally {
     isDeleting.value = false;

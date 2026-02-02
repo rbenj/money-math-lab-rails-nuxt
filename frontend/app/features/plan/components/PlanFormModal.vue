@@ -9,6 +9,7 @@ import {
   SLOW_LOADING_DELAY,
 } from "@/constants";
 import { birthDateStringToMonthYear } from "@/lib/date-utils";
+import { parseApiError } from "@/lib/error-utils";
 import type { SerializedPlanSummary } from "../types";
 import { usePlanForm } from "../composables/use-plan-form";
 
@@ -81,7 +82,7 @@ async function handleSubmit() {
       : await createPlan(formData.value, useExampleData.value);
     emit("success", planSummary);
   } catch (e) {
-    errorMessage.value = "Failed to save plan. Please try again.";
+    errorMessage.value = parseApiError(e, "Failed to save plan. Please try again.");
     console.error("Failed to save plan", e);
   }
 }

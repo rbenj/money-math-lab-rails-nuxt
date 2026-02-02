@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Plus, Settings, Trash2 } from "lucide-vue-next";
+import { parseApiError } from "@/lib/error-utils";
 import type { SerializedPlanSummary } from "@/features/plan/types";
 import { usePlanApi } from "@/features/plan/composables/use-plan-api";
 
@@ -40,7 +41,7 @@ async function handleDeletePlan() {
     deletingPlan.value = null;
     await refresh();
   } catch (e) {
-    deleteErrorMessage.value = "Failed to delete plan. Please try again.";
+    deleteErrorMessage.value = parseApiError(e, "Failed to delete plan. Please try again.");
     console.error("Failed to delete plan:", e);
   } finally {
     isDeleteLoading.value = false;

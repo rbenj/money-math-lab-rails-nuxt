@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Loader2 } from "lucide-vue-next";
 import { RATE_PRECISION, SLOW_LOADING_DELAY } from "@/constants";
+import { parseApiError } from "@/lib/error-utils";
 import { type EntityFormData, type ScheduleFormData, EntityType } from "../types";
 import type { Entity } from "../entity";
 import { entityToFormData, getDefaultFormData } from "../form-helpers";
@@ -128,7 +129,7 @@ async function handleSubmit() {
       : await createEntity(props.planId, formData.value);
     emit("success", entity);
   } catch (e) {
-    errorMessage.value = "Failed to save entity. Please try again.";
+    errorMessage.value = parseApiError(e, "Failed to save entity. Please try again.");
     console.error("Failed to save entity:", e);
   }
 }
