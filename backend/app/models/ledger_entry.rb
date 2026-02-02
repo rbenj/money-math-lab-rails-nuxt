@@ -3,5 +3,5 @@ class LedgerEntry < ApplicationRecord
 
   validates :day, presence: true, numericality: { only_integer: true }
 
-  default_scope { order(:day) }
+  scope :chronological, -> { order(:day) }
 end

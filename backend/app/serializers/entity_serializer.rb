@@ -13,6 +13,8 @@ class EntitySerializer < Blueprinter::Base
   field :updated_at, name: :updatedAt
 
   view :with_ledger_entries do
-    association :ledger_entries, blueprint: LedgerEntrySerializer, name: :ledgerEntries
+    association :ledger_entries, blueprint: LedgerEntrySerializer, name: :ledgerEntries do |entity, _options|
+      entity.ledger_entries.chronological
+    end
   end
 end

@@ -5,7 +5,7 @@ module Api
       before_action :set_ledger_entry, only: [ :show, :update, :destroy ]
 
       def index
-        render json: LedgerEntrySerializer.render(@entity.ledger_entries)
+        render json: LedgerEntrySerializer.render(@entity.ledger_entries.chronological)
       end
 
       def show

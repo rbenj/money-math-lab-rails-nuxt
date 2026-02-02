@@ -9,8 +9,10 @@ class ExamplePlanService
   end
 
   def call
-    create_entities
-    update_entity_references
+    ActiveRecord::Base.transaction do
+      create_entities
+      update_entity_references
+    end
   end
 
   private
